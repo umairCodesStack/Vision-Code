@@ -1,0 +1,9 @@
+course_id,course_title,difficulty,tags,description
+C001,Python for Beginners,Beginner,"python, programming, basics","Introductory Python course covering syntax, loops, and functions."
+C002,Web Development with React,Intermediate,"react, web dev, frontend",Build dynamic web apps using React.js framework.
+C003,Data Science Essentials,Intermediate,"data science, pandas, numpy","Learn data cleaning, analysis, and visualization."
+C004,Machine Learning with Python,Advanced,"ml, python, scikit-learn","Covers regression, classification, and ML pipelines."
+C005,Android App Development,Intermediate,"java, android, mobile",Build native Android apps with Java.
+C006,Deep Learning Masterclass,Advanced,"ai, deep learning, neural networks",Advanced neural network concepts with TensorFlow.
+C007,Cloud Computing Fundamentals,Intermediate,"cloud, aws, deployment","Learn cloud concepts, AWS setup, and deployment."
+C008,Web Design for Beginners,Beginner,"html, css, web design",Learn front-end design with HTML and CSS.

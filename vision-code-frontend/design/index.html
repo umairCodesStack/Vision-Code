@@ -315,14 +315,18 @@
     </footer>
 
     <script>
-        // Scroll Animation Observer
+        // Scroll Animation Observer - triggers on every scroll in/out
         function initScrollAnimations() {
             const animatedElements = document.querySelectorAll('.scroll-fade-up, .scroll-slide-left, .scroll-slide-right, .scroll-scale');
             
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
+                        // Add revealed class when element enters viewport
                         entry.target.classList.add('revealed');
+                    } else {
+                        // Remove revealed class when element leaves viewport
+                        entry.target.classList.remove('revealed');
                     }
                 });
             }, {

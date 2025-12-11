@@ -16,6 +16,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL="Accounts.User"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -44,6 +45,19 @@ INSTALLED_APPS = [
     'Enrollment_Learning',
     'Gamification',
 ]
+INSTALLED_APPS += [
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'django_filters',
+]
+
+INSTALLED_APPS += ["corsheaders"]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+# or for dev:
+# CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +68,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware",] + MIDDLEWARE
 
 ROOT_URLCONF = 'vision_code.urls'
 
@@ -107,6 +123,24 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 12,
+}
 
 
 # Internationalization

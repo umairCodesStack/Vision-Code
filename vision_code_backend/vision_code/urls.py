@@ -47,5 +47,5 @@ urlpatterns = [
     # Include app-specific URLs if needed later (AI, assessments, etc.)
     # path("api/accounts/", include("Accounts.urls")),
     # path("api/courses/", include("Courses.urls")),
-    # path("api/learning/", include("Enrollment_Learning.urls")),
+    path("api/learning/", include("Enrollment_Learning.urls")),
 ]

@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 # ViewSets
 from Accounts.views import UserViewSet, SignupView, UserMeView
-from Courses.views import CourseViewSet
+from Courses.views import CourseViewSet ,CourseModuleViewSet,ContentItemViewSet
 from Enrollment_Learning.views import EnrollmentViewSet
 
 # JWT
@@ -21,6 +21,8 @@ router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
 router.register(r"courses", CourseViewSet, basename="course")
 router.register(r"enrollments", EnrollmentViewSet, basename="enrollment")
+router.register(r"course-modules", CourseModuleViewSet, basename="course-module")
+router.register(r"content-items", ContentItemViewSet, basename="content-item")
 
 
 # ----------------------------------------

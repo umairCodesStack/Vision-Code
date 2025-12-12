@@ -1,17 +1,12 @@
-import { NavLink } from "react-router-dom";
-import CallToAction from "../components/CallToAction";
-import Features from "../components/Features";
-import Footer from "../components/Footer";
-import HeroSection from "../components/HeroSection";
-import LearningJourney from "../components/LearningJourney";
 import NavBar from "../components/NavBar";
-import SkillsSection from "../components/SkillsSection";
-import Stats from "../components/Stats";
-import useScrollAnimation from "../hooks/useScrollAnimation";
-const APP_NAME = "Vision-Code";
+import Footer from "../components/Footer";
+import CommunityHeader from "../components/CommunityHeader";
+import CommunitySidebar from "../components/CommunitySidebar";
+import CommunityFeed from "../components/CommunityFeed";
+import { NavLink } from "react-router-dom";
+import { APP_NAME } from "../App";
 
-function HomePage() {
-  useScrollAnimation();
+function CommunityPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <NavBar
@@ -26,7 +21,7 @@ function HomePage() {
             </NavLink>
             <NavLink
               to="/signup"
-              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover: shadow-lg transition"
             >
               Sign Up
             </NavLink>
@@ -35,6 +30,12 @@ function HomePage() {
       >
         <NavLink
           to="/courses"
+          className="text-gray-700 hover:text-blue-600 font-medium transition"
+        >
+          Courses
+        </NavLink>
+        <NavLink
+          to="/community"
           className={({ isActive }) =>
             `font-medium transition pb-1 ${
               isActive
@@ -42,12 +43,6 @@ function HomePage() {
                 : "text-gray-700 hover:text-blue-600"
             }`
           }
-        >
-          Courses
-        </NavLink>
-        <NavLink
-          to="/community"
-          className="text-gray-700 hover:text-blue-600 font-medium transition"
         >
           Community
         </NavLink>
@@ -58,15 +53,17 @@ function HomePage() {
           Practice
         </NavLink>
       </NavBar>
-      <HeroSection />
-      <Stats />
-      <Features />
-      <SkillsSection />
-      <LearningJourney />
-      <CallToAction />
+
+      <CommunityHeader />
+
+      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <CommunitySidebar />
+        <CommunityFeed />
+      </div>
+
       <Footer />
     </div>
   );
 }
 
-export default HomePage;
+export default CommunityPage;

@@ -4,8 +4,11 @@ const FAKE_USER = {
   email: "info@vision-code.dev",
   password: "vision-code",
 };
+
 const AuthContext = createContext();
+
 const initialState = { user: null, isAuthenticated: false };
+
 function reducer(state, action) {
   switch (action.type) {
     case "login":
@@ -24,25 +27,35 @@ function reducer(state, action) {
       throw new Error("Unknown action type");
   }
 }
+
 function AuthProvider({ children }) {
   const [{ user, isAuthenticated }, dispatch] = useReducer(
     reducer,
     initialState
   );
-  function login({ email, password }) {
+
+  function login(email, password) {
     if (email === FAKE_USER.email && password === FAKE_USER.password) {
-      dispatch({ type: "login", payload: { email, password } });
+      dispatch({
+        type: "login",
+        payload: { email, password, name: FAKE_USER.name },
+      });
     }
   }
+
   function logout() {
     dispatch({ type: "logout" });
   }
+
   return (
-    <AuthContext.Provider value={{ login, logout, dispatch }}>
+    <AuthContext.Provider
+      value={{ login, logout, user, isAuthenticated, dispatch }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
+
 function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -50,4 +63,5 @@ function useAuth() {
   }
   return context;
 }
+
 export { AuthProvider, useAuth };

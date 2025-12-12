@@ -1,20 +1,16 @@
-import { NavLink } from "react-router-dom";
-import CallToAction from "../components/CallToAction";
-import Features from "../components/Features";
+import Navbar from "../components/NavBar";
 import Footer from "../components/Footer";
-import HeroSection from "../components/HeroSection";
-import LearningJourney from "../components/LearningJourney";
-import NavBar from "../components/NavBar";
-import SkillsSection from "../components/SkillsSection";
-import Stats from "../components/Stats";
-import useScrollAnimation from "../hooks/useScrollAnimation";
-const APP_NAME = "Vision-Code";
+import CourseHero from "../components/CourseHero";
+import CourseFilters from "../components/CourseFilters";
+import CourseGrid from "../components/CourseGrid";
+import NewsLetter from "../components/NewsLetter";
+import { NavLink } from "react-router-dom";
+import { APP_NAME } from "../App";
 
-function HomePage() {
-  useScrollAnimation();
+function CoursesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <NavBar
+      <Navbar
         appName={APP_NAME}
         authButtons={
           <>
@@ -57,16 +53,15 @@ function HomePage() {
         >
           Practice
         </NavLink>
-      </NavBar>
-      <HeroSection />
-      <Stats />
-      <Features />
-      <SkillsSection />
-      <LearningJourney />
-      <CallToAction />
+      </Navbar>
+
+      <CourseHero />
+      <CourseFilters />
+      <CourseGrid />
+      <NewsLetter />
       <Footer />
     </div>
   );
 }
 
-export default HomePage;
+export default CoursesPage;

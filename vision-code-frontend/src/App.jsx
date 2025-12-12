@@ -1,15 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import NavBar from "./components/NavBar";
-import AppLayout from "./pages/AppLayout";
+
+import HomePage from "./pages/HomePage";
+import { AuthProvider } from "./context/FakeAuth";
 
 function App() {
   return (
     <div>
       <BrowserRouter>
-        <Routes>
-          <Route index element={<AppLayout />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route index element={<HomePage />} />
+            <Route  ></Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </div>
   );

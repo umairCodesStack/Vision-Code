@@ -19,7 +19,7 @@ router = DefaultRouter()
 
 # IMPORTANT: keep endpoint names lowercase & REST style
 router.register(r"users", UserViewSet, basename="user")
-router.register(r"courses", CourseViewSet, basename="course")
+#router.register(r"courses", CourseViewSet, basename="course")
 router.register(r"enrollments", EnrollmentViewSet, basename="enrollment")
 router.register(r"course-modules", CourseModuleViewSet, basename="course-module")
 router.register(r"content-items", ContentItemViewSet, basename="content-item")
@@ -45,7 +45,8 @@ urlpatterns = [
     path("api/", include(router.urls)),
 
     # Include app-specific URLs if needed later (AI, assessments, etc.)
-    # path("api/accounts/", include("Accounts.urls")),
-    # path("api/courses/", include("Courses.urls")),
+    path("api/accounts/", include("Accounts.urls")),
+    path("api/courses/", include("Courses.urls")),
     path("api/learning/", include("Enrollment_Learning.urls")),
+    path("api/assessments/", include("Assessments.urls")),
 ]

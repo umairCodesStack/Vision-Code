@@ -49,17 +49,19 @@ INSTALLED_APPS += [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+     'corsheaders',
 ]
 
-INSTALLED_APPS += ["corsheaders"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 # or for dev:
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
+     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -99,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'VISION_CODE',        # Database name you just created
         'USER': 'postgres',          # Username
-        'PASSWORD': 'admin123',      # Password we reset
+        'PASSWORD': 'admin',      # Password we reset
         'HOST': 'localhost',         # Host
         'PORT': '5432',              # Port
     }

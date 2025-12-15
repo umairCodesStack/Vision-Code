@@ -103,7 +103,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'VISION_CODE',        # Database name you just created
         'USER': 'postgres',          # Username
-        'PASSWORD': 'admin123',      # Password we reset
+        'PASSWORD': 'admin',      # Password we reset
         'HOST': 'localhost',         # Host
         'PORT': '5432',              # Port
     }

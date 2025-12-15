@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -101,7 +103,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'VISION_CODE',        # Database name you just created
         'USER': 'postgres',          # Username
-        'PASSWORD': 'admin',      # Password we reset
+        'PASSWORD': 'admin123',      # Password we reset
         'HOST': 'localhost',         # Host
         'PORT': '5432',              # Port
     }
@@ -161,3 +163,25 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+SIMPLE_JWT = {
+    # 🔐 ACCESS TOKEN (used in every API request)
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=6),
+
+    # 🔁 REFRESH TOKEN (used to get new access token)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+
+    # Rotate refresh tokens (recommended)
+    "ROTATE_REFRESH_TOKENS": True,
+
+    # Blacklist old refresh tokens (recommended)
+    "BLACKLIST_AFTER_ROTATION": True,
+
+    # Security settings
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+
+    # Optional but good
+    "UPDATE_LAST_LOGIN": True,
+}

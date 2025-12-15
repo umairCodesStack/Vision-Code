@@ -24,11 +24,10 @@ function reducer(state, action) {
         isAuthenticated: false,
       };
     case "signup":
-      return{
+      return {
         ...state,
-        user:action.payload,
-
-      }
+        user: action.payload,
+      };
     default:
       throw new Error("Unknown action type");
   }
@@ -41,60 +40,59 @@ function AuthProvider({ children }) {
   );
   async function loginApi(email, password) {
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: email,  
-                password: password
-            })
-        });
-        
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        
-        const data = await res.json();
-        console.log("Login successful:", data);
-        return data;
-        
+      const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Login successful:", data);
+      return data;
     } catch (error) {
-        console.error("Login failed:", error);
-        throw error;
+      console.error("Login failed:", error);
+      throw error;
     }
-}
-  async function signupApi(email,password) {
+  }
+  async function signupApi(firstName, lastName, email, password) {
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: email,  
-                password: password
-            })
-        });
-        
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        
-        return res;
-        
+      const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      console.log("Signup successful");
+      return res;
     } catch (error) {
-        console.error("Signup failed:", error);
-        throw error;
+      console.error("Signup failed:", error);
+      throw error;
     }
-    
   }
   async function login(email, password) {
-    const token=await loginApi(email,password);
+    const token = await loginApi(email, password);
     console.log(token);
     if (token) {
-       localStorage.setItem("access_token", token.access);
+      localStorage.setItem("access_token", token.access);
       localStorage.setItem("refresh_token", token.refresh);
       dispatch({
         type: "login",
@@ -102,13 +100,11 @@ function AuthProvider({ children }) {
       });
     }
   }
-  async function  signup(email,password) {
-    const res=await signupApi(email,password);
-    if(res.ok)
-    {
-      dispatch({type:"signup",payload:{email,password}});
+  async function signup(firstName, lastName, email, password) {
+    const res = await signupApi(firstName, lastName, email, password);
+    if (res.ok) {
+      dispatch({ type: "signup", payload: { email, password } });
     }
-    
   }
   function logout() {
     dispatch({ type: "logout" });
@@ -116,7 +112,7 @@ function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, dispatch,signup }}
+      value={{ login, logout, user, isAuthenticated, dispatch, signup }}
     >
       {children}
     </AuthContext.Provider>

@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import CoursesPage from "./pages/CoursesPage";
 import CommunityPage from "./pages/CommunityPage";
 import { useEffect } from "react";
+import ProctoringApp from "./pages/ProctoringApp";
 export const APP_NAME = "Vision-Code";
 function App() {
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
               }
             />
             <Route path="login" element={<LoginForm />} />
+            <Route path="attention" element={<ProctoringApp />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

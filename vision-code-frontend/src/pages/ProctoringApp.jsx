@@ -10,7 +10,7 @@ import {
   VolumeX,
 } from "lucide-react";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://127.0.0.1:8000";
 
 export default function ProctoringApp() {
   const [sessionId, setSessionId] = useState(null);
@@ -85,6 +85,7 @@ export default function ProctoringApp() {
       });
 
       const data = await response.json();
+      console.log(data);
       setSessionId(data.session_id);
       setStage("register");
       setMessage("Position your face in the frame and click Register");

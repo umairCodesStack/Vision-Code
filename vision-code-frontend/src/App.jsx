@@ -7,6 +7,7 @@ import ProtectedRouter from "./pages/ProtectedRouter";
 import Dashboard from "./pages/Dashboard";
 import CoursesPage from "./pages/CoursesPage";
 import CommunityPage from "./pages/CommunityPage";
+import SignupFrom from "./pages/SignupForm";
 export const APP_NAME = "Vision-Code";
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               }
             />
             <Route path="login" element={<LoginForm />} />
+            <Route path="signup" element={<SignupFrom/>}/>
           </Routes>
         </AuthProvider>
       </BrowserRouter>

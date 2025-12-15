@@ -23,6 +23,12 @@ function reducer(state, action) {
         user: null,
         isAuthenticated: false,
       };
+    case "signup":
+      return{
+        ...state,
+        user:action.payload,
+
+      }
     default:
       throw new Error("Unknown action type");
   }
@@ -33,23 +39,84 @@ function AuthProvider({ children }) {
     reducer,
     initialState
   );
-
-  function login(email, password) {
-    if (email === FAKE_USER.email && password === FAKE_USER.password) {
+  async function loginApi(email, password) {
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,  
+                password: password
+            })
+        });
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Login successful:", data);
+        return data;
+        
+    } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+    }
+}
+  async function signupApi(email,password) {
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,  
+                password: password
+            })
+        });
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        return res;
+        
+    } catch (error) {
+        console.error("Signup failed:", error);
+        throw error;
+    }
+    
+  }
+  async function login(email, password) {
+    const token=await loginApi(email,password);
+    console.log(token);
+    if (token) {
+       localStorage.setItem("access_token", token.access);
+      localStorage.setItem("refresh_token", token.refresh);
       dispatch({
         type: "login",
         payload: { email, password, name: FAKE_USER.name },
       });
     }
   }
-
+  async function  signup(email,password) {
+    const res=await signupApi(email,password);
+    if(res.ok)
+    {
+      dispatch({type:"signup",payload:{email,password}});
+    }
+    
+  }
   function logout() {
     dispatch({ type: "logout" });
   }
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, dispatch }}
+      value={{ login, logout, user, isAuthenticated, dispatch,signup }}
     >
       {children}
     </AuthContext.Provider>

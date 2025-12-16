@@ -7,7 +7,7 @@ const FAKE_USER = {
 
 const AuthContext = createContext();
 
-const initialState = { user: null, isAuthenticated: false };
+const initialState = { user: null, isAuthenticated: false, error: null };
 
 function reducer(state, action) {
   switch (action.type) {
@@ -27,6 +27,14 @@ function reducer(state, action) {
       return {
         ...state,
         user: action.payload,
+        isAuthenticated: true,
+        name: action.payload.firstName + " " + action.payload.lastName,
+      };
+    case "error":
+      return {
+        ...state,
+        isAuthenticated: false,
+        error: action.payload,
       };
     default:
       throw new Error("Unknown action type");
@@ -34,7 +42,7 @@ function reducer(state, action) {
 }
 
 function AuthProvider({ children }) {
-  const [{ user, isAuthenticated }, dispatch] = useReducer(
+  const [{ user, isAuthenticated, error }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -60,6 +68,7 @@ function AuthProvider({ children }) {
       return data;
     } catch (error) {
       console.error("Login failed:", error);
+      dispatch({ type: "error", payload: error });
       throw error;
     }
   }
@@ -96,23 +105,32 @@ function AuthProvider({ children }) {
       localStorage.setItem("refresh_token", token.refresh);
       dispatch({
         type: "login",
-        payload: { email, password, name: FAKE_USER.name },
+        payload: { email, password },
       });
+    } else {
+      dispatch({ type: "error", payload: "Invalid Credentials" });
     }
   }
   async function signup(firstName, lastName, email, password) {
     const res = await signupApi(firstName, lastName, email, password);
+    console.log(res);
     if (res.ok) {
-      dispatch({ type: "signup", payload: { email, password } });
+      dispatch({
+        type: "signup",
+        payload: { email, password, firstName, lastName },
+      });
+    } else {
+      dispatch({ type: "error", error: "Signup Failed" });
     }
   }
+
   function logout() {
     dispatch({ type: "logout" });
   }
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, dispatch, signup }}
+      value={{ login, logout, user, isAuthenticated, error, dispatch, signup }}
     >
       {children}
     </AuthContext.Provider>

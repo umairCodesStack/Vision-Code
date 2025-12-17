@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
+
 const FAKE_USER = {
   name: "Vision-Code",
   email: "info@vision-code.dev",
@@ -16,17 +17,25 @@ function reducer(state, action) {
         ...state,
         user: action.payload,
         isAuthenticated: true,
+        error: null,
       };
     case "logout":
       return {
         ...state,
         user: null,
         isAuthenticated: false,
+        error: null,
       };
     case "signup":
       return {
         ...state,
         user: action.payload,
+        error: null,
+      };
+    case "error":
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       throw new Error("Unknown action type");
@@ -38,26 +47,9 @@ function AuthProvider({ children }) {
     reducer,
     initialState
   );
+
   async function loginApi(email, password) {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log("Login successful:", data);
-      return data;
       const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
         method: "POST",
         headers: {
@@ -81,8 +73,7 @@ function AuthProvider({ children }) {
       throw error;
     }
   }
-  async function signupApi(firstName, lastName, email, password) {
-  }
+
   async function signupApi(firstName, lastName, email, password) {
     try {
       const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
@@ -91,72 +82,79 @@ function AuthProvider({ children }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstName: firstName,
-          lastName: lastName,
+          first_name: firstName, // Changed to snake_case for backend
+          last_name: lastName, // Changed to snake_case for backend
           email: email,
           password: password,
         }),
       });
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        const errorData = await res.json();
+        throw new Error(
+          errorData.message || `HTTP error! status: ${res.status}`
+        );
       }
-      console.log("Signup successful");
-      return res;
-      const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-        }),
-      });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      console.log("Signup successful");
-      return res;
+      const data = await res.json();
+      console.log("Signup successful:", data);
+      return data;
     } catch (error) {
       console.error("Signup failed:", error);
       throw error;
-      console.error("Signup failed:", error);
+    }
+  }
+
+  async function login(email, password) {
+    try {
+      const token = await loginApi(email, password);
+      console.log(token);
+
+      if (token && token.access) {
+        localStorage.setItem("access_token", token.access);
+        localStorage.setItem("refresh_token", token.refresh);
+
+        dispatch({
+          type: "login",
+          payload: { email, name: token.user?.name || "User" },
+        });
+      } else {
+        dispatch({ type: "error", payload: "Invalid Credentials" });
+      }
+    } catch (error) {
+      dispatch({ type: "error", payload: error.message || "Login failed" });
       throw error;
     }
   }
-  async function login(email, password) {
-    const token = await loginApi(email, password);
-    const token = await loginApi(email, password);
-    console.log(token);
-    if (token) {
-      localStorage.setItem("access_token", token.access);
-      localStorage.setItem("access_token", token.access);
-      localStorage.setItem("refresh_token", token.refresh);
-      dispatch({
-        type: "login",
-        payload: { email, password },
-      });
-    } else {
-      dispatch({ type: "error", payload: "Invalid Credentials" });
-    }
-  }
+
   async function signup(firstName, lastName, email, password) {
-    const res = await signupApi(firstName, lastName, email, password);
-    if (res.ok) {
-      dispatch({ type: "signup", payload: { email, password } });
+    try {
+      const res = await signupApi(firstName, lastName, email, password);
+
+      if (res) {
+        dispatch({
+          type: "signup",
+          payload: { email, name: `${firstName} ${lastName}` },
+        });
+
+        // Optionally auto-login after signup
+        // await login(email, password);
+      }
+    } catch (error) {
+      dispatch({ type: "error", payload: error.message || "Signup failed" });
+      throw error;
     }
   }
+
   function logout() {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     dispatch({ type: "logout" });
   }
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, dispatch, signup }}
+      value={{ login, logout, signup, user, isAuthenticated, error, dispatch }}
     >
       {children}
     </AuthContext.Provider>
@@ -166,7 +164,7 @@ function AuthProvider({ children }) {
 function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("Context was used out of the Auth Provider");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

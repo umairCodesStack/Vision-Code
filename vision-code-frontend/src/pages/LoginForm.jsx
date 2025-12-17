@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/FakeAuth";
 import GoogleButton from "../components/GoogleButton";
 import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 function LoginForm() {
   const [email, setEmail] = useState("info@vision-code.dev");
   const [password, setPassword] = useState("vision-code");
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +58,6 @@ function LoginForm() {
           Sign In
         </Button>
       </form>
-
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-300"></div>
@@ -71,12 +70,12 @@ function LoginForm() {
       <GoogleButton />
       <p className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{" "}
-        <a
-          href="signup.html"
+        <NavLink
+          to="/signup"
           className="text-blue-600 font-semibold hover:underline"
         >
           Sign up
-        </a>
+        </NavLink>
       </p>
     </div>
   );

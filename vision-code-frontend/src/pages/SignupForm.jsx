@@ -12,7 +12,7 @@ function SignupForm() {
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    signup(email, password);
+    signup(firstName, lastName, email, password);
   };
 
   const handleGoogleLogin = () => {};
@@ -24,10 +24,6 @@ function SignupForm() {
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-900">
-        Welcome Back
-      </h2>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -46,7 +42,7 @@ function SignupForm() {
             Last Name
           </label>
           <input
-            type="email"
+            type="text"
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}

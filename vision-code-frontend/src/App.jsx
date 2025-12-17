@@ -19,6 +19,14 @@ function App() {
     }
     name();
   }, []);
+  useEffect(() => {
+    async function name() {
+      const res = await fetch(" http://127.0.0.1:8000/api/users/");
+      const data = await res.json();
+      console.log(data);
+    }
+    name();
+  }, []);
   return (
     <div>
       <BrowserRouter>

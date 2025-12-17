@@ -90,7 +90,7 @@ class CourseListSerializer(serializers.ModelSerializer):
         )
 
     def get_instructor(self, obj):
-        return {"id": obj.instructor.id, "email": obj.instructor.email}
+        return {"id": obj.instructor.id, "Name :": obj.instructor.first_name +" "+ obj.instructor.last_name}
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):

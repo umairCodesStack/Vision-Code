@@ -81,6 +81,7 @@ class CourseListSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
+            "description",
             "difficulty_level",
             "topics",
             "is_published",

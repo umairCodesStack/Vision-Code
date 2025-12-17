@@ -44,9 +44,11 @@ class ContentItem(models.Model):
         ('article', 'Article'),
         ('coding_problem', 'Coding Problem'),
         ('quiz', 'Quiz'),
+        ('assignment','Assignment'),
     ]
     
     DIFFICULTY_CHOICES = [
+        ('beginner','Beginner'),
         ('easy', 'Easy'),
         ('medium', 'Medium'),
         ('hard', 'Hard'),

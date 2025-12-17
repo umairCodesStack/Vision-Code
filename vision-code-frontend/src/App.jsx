@@ -7,9 +7,18 @@ import ProtectedRouter from "./pages/ProtectedRouter";
 import Dashboard from "./pages/Dashboard";
 import CoursesPage from "./pages/CoursesPage";
 import CommunityPage from "./pages/CommunityPage";
-import SignupFrom from "./pages/SignupForm";
+import { useEffect } from "react";
+import ProctoringApp from "./pages/ProctoringApp";
 export const APP_NAME = "Vision-Code";
 function App() {
+  useEffect(() => {
+    async function name() {
+      const res = await fetch(" http://127.0.0.1:8000/api/users/");
+      const data = await res.json();
+      console.log(data);
+    }
+    name();
+  }, []);
   return (
     <div>
       <BrowserRouter>
@@ -27,7 +36,7 @@ function App() {
               }
             />
             <Route path="login" element={<LoginForm />} />
-            <Route path="signup" element={<SignupFrom/>}/>
+            <Route path="attention" element={<ProctoringApp />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

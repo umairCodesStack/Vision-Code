@@ -27,14 +27,6 @@ function reducer(state, action) {
       return {
         ...state,
         user: action.payload,
-        isAuthenticated: true,
-        name: action.payload.firstName + " " + action.payload.lastName,
-      };
-    case "error":
-      return {
-        ...state,
-        isAuthenticated: false,
-        error: action.payload,
       };
     default:
       throw new Error("Unknown action type");
@@ -66,11 +58,30 @@ function AuthProvider({ children }) {
       const data = await res.json();
       console.log("Login successful:", data);
       return data;
+      const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Login successful:", data);
+      return data;
     } catch (error) {
       console.error("Login failed:", error);
-      dispatch({ type: "error", payload: error });
       throw error;
     }
+  }
+  async function signupApi(firstName, lastName, email, password) {
   }
   async function signupApi(firstName, lastName, email, password) {
     try {
@@ -92,15 +103,37 @@ function AuthProvider({ children }) {
       }
       console.log("Signup successful");
       return res;
+      const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      console.log("Signup successful");
+      return res;
     } catch (error) {
+      console.error("Signup failed:", error);
+      throw error;
       console.error("Signup failed:", error);
       throw error;
     }
   }
   async function login(email, password) {
     const token = await loginApi(email, password);
+    const token = await loginApi(email, password);
     console.log(token);
     if (token) {
+      localStorage.setItem("access_token", token.access);
       localStorage.setItem("access_token", token.access);
       localStorage.setItem("refresh_token", token.refresh);
       dispatch({
@@ -113,24 +146,17 @@ function AuthProvider({ children }) {
   }
   async function signup(firstName, lastName, email, password) {
     const res = await signupApi(firstName, lastName, email, password);
-    console.log(res);
     if (res.ok) {
-      dispatch({
-        type: "signup",
-        payload: { email, password, firstName, lastName },
-      });
-    } else {
-      dispatch({ type: "error", error: "Signup Failed" });
+      dispatch({ type: "signup", payload: { email, password } });
     }
   }
-
   function logout() {
     dispatch({ type: "logout" });
   }
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, error, dispatch, signup }}
+      value={{ login, logout, user, isAuthenticated, dispatch, signup }}
     >
       {children}
     </AuthContext.Provider>

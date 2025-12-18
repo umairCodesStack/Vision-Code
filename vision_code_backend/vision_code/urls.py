@@ -11,6 +11,8 @@ from Enrollment_Learning.views import EnrollmentViewSet
 # JWT
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from Accounts.token_views import CustomTokenObtainPairView
+
 
 # ----------------------------------------
 # DRF ROUTER REGISTRATION
@@ -38,9 +40,12 @@ urlpatterns = [
     path("api/auth/me/", UserMeView.as_view(), name="user-me"),
 
     # JWT Auth
+    #these are the default simple jwt endpoints
     path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-
+    # Custom JWT Auth endpoint with custom serializer
+    path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Router endpoints
     path("api/", include(router.urls)),
 

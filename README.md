@@ -184,20 +184,6 @@ Access the application at:
 http://127.0.0.1:8000/
 ```
 
----
-
-## Screenshots (Sprint 1)
-
-> *(Add screenshots in `/docs/screenshots/` directory and reference them here)*
-
-* Login Page
-* Student Dashboard
-* Instructor Panel
-* Course & Module Management
-* Quiz Interface
-
----
-
 ## Known Issues / TODOs
 
 * Integration of computer vision proctoring into live assessments pending

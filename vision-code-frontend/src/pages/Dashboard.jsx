@@ -5,8 +5,9 @@ import Button from "../components/Button";
 
 function Dashboard() {
   const { user, logout } = useAuth();
+  console.log("Authenticated user:", user);
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState("overview");
+  //const [selectedTab, setSelectedTab] = useState("overview");
 
   const handleLogout = () => {
     logout();
@@ -35,7 +36,7 @@ function Dashboard() {
                   </svg>
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Vision-Code
+                  {user?.name || "Student"}
                 </span>
               </a>
             </div>

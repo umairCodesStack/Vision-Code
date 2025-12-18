@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer } from "react";
 
-const FAKE_USER = {
-  name: "Vision-Code",
-  email: "info@vision-code.dev",
-  password: "vision-code",
-};
+// const FAKE_USER = {
+//   name: "Vision-Code",
+//   email: "info@vision-code.dev",
+//   password: "vision-code",
+// };
 
 const AuthContext = createContext();
 

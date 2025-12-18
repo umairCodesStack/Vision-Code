@@ -10,6 +10,9 @@ import CommunityPage from "./pages/CommunityPage";
 import ProctoringApp from "./pages/ProctoringApp";
 import SignupForm from "./pages/SignupForm";
 import CourseModulesPage from "./pages/CourseModulesPage";
+import InstructorDashboard from "./pages/InstructorDashboard";
+import Practice from "./pages/Practice";
+import CodeEditor from "./pages/CodeEditor";
 export const APP_NAME = "Vision-Code";
 function App() {
   return (
@@ -21,14 +24,18 @@ function App() {
             <Route path="courses" element={<CoursesPage />} />
             <Route path="modules/:courseId" element={<CourseModulesPage />} />
             <Route path="community" element={<CommunityPage />} />
+            <Route path="/practice" element={<Practice />} />
+            <Route path="/practice/editor" element={<CodeEditor />} />
             <Route
               path="app"
               element={
-                <ProtectedRouter>
-                  <Dashboard />
-                </ProtectedRouter>
+                <ProtectedRouter
+                  studentDashboard={<Dashboard />}
+                  InstructorDashboard={<InstructorDashboard />}
+                ></ProtectedRouter>
               }
             />
+            <Route path="instructor" element={<InstructorDashboard />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="attention" element={<ProctoringApp />} />
             <Route path="signup" element={<SignupForm />} />

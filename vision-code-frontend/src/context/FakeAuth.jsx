@@ -74,7 +74,13 @@ function AuthProvider({ children }) {
     }
   }
 
-  async function signupApi(firstName, lastName, email, password) {
+  async function signupApi(
+    firstName,
+    lastName,
+    email,
+    password,
+    role = "student"
+  ) {
     try {
       const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
         method: "POST",
@@ -82,10 +88,11 @@ function AuthProvider({ children }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          first_name: firstName, // Changed to snake_case for backend
-          last_name: lastName, // Changed to snake_case for backend
+          first_name: firstName,
+          last_name: lastName,
           email: email,
           password: password,
+          role: role,
         }),
       });
 
@@ -127,9 +134,15 @@ function AuthProvider({ children }) {
     }
   }
 
-  async function signup(firstName, lastName, email, password) {
+  async function signup(
+    firstName,
+    lastName,
+    email,
+    password,
+    role = "student"
+  ) {
     try {
-      const res = await signupApi(firstName, lastName, email, password);
+      const res = await signupApi(firstName, lastName, email, password, role);
 
       if (res) {
         dispatch({

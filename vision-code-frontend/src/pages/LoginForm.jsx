@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const [email, setEmail] = useState("info@vision-code.dev");
+  const [email, setEmail] = useState("vision-code@gmail.com");
   const [password, setPassword] = useState("vision-code");
   const [showPassword, setShowPassword] = useState(false);
   const { login, isAuthenticated, error } = useAuth();
@@ -143,12 +143,12 @@ function LoginForm() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-300"></div>
         </div>
-        <div className="relative flex justify-center text-sm">
+        {/* <div className="relative flex justify-center text-sm">
           <span className="px-2 bg-white text-gray-500">Or continue with</span>
-        </div>
+        </div> */}
       </div>
 
-      <GoogleButton />
+      {/* <GoogleButton /> */}
 
       <p className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{" "}

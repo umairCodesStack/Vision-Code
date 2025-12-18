@@ -70,7 +70,7 @@ from Enrollment_Learning.serializers import EnrollmentSerializer
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().select_related("instructor")
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["difficulty_level", "is_published"]
+    filterset_fields = ["difficulty_level", "is_published","instructor"]
     search_fields = ["title", "topics"]
     ordering_fields = ["created_at", "price"]
 

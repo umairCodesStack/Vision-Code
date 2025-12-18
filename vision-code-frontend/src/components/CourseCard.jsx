@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 
 function CourseCard({ courseId }) {
   const [course, setCourse] = useState(null);
@@ -279,7 +280,7 @@ function CourseCard({ courseId }) {
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span className="truncate">{instructor.email}</span>
+                <span className="truncate">Instructor: {instructor.name}</span>
               </div>
             )}
           </div>
@@ -295,12 +296,12 @@ function CourseCard({ courseId }) {
               <span className="font-bold text-gray-900">{rating}</span>
               <span className="text-gray-400 text-sm">({reviews})</span>
             </div>
-            <a
-              href="#"
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover: shadow-lg transition font-semibold text-sm transform hover:scale-105"
+            <Link
+              to={`/modules/${courseId}`}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition font-semibold text-sm transform hover:scale-105"
             >
               Go to Course
-            </a>
+            </Link>
           </div>
         </div>
       </div>

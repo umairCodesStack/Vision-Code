@@ -4,8 +4,9 @@ import CourseHero from "../components/CourseHero";
 import CourseFilters from "../components/CourseFilters";
 import CourseGrid from "../components/CourseGrid";
 import NewsLetter from "../components/NewsLetter";
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { APP_NAME } from "../App";
+import { Outdent } from "lucide-react";
 
 function CoursesPage() {
   return (
@@ -58,6 +59,7 @@ function CoursesPage() {
       <CourseHero />
       <CourseFilters />
       <CourseGrid />
+      <Outlet />
       <NewsLetter />
       <Footer />
     </div>

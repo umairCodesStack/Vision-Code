@@ -10,6 +10,7 @@ import CommunityPage from "./pages/CommunityPage";
 import { useEffect } from "react";
 import ProctoringApp from "./pages/ProctoringApp";
 import SignupForm from "./pages/SignupForm";
+import CourseModulesPage from "./pages/CourseModulesPage";
 export const APP_NAME = "Vision-Code";
 function App() {
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
           <Routes>
             <Route index element={<HomePage />} />
             <Route path="courses" element={<CoursesPage />} />
+            <Route path="modules/:courseId" element={<CourseModulesPage />} />
             <Route path="community" element={<CommunityPage />} />
             <Route
               path="app"
@@ -47,6 +49,7 @@ function App() {
             <Route path="login" element={<LoginForm />} />
             <Route path="attention" element={<ProctoringApp />} />
             <Route path="signup" element={<SignupForm />} />
+
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </AuthProvider>

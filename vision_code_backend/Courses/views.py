@@ -134,7 +134,7 @@ class ContentItemViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
-            return ContentItemNestedSerializer
+            return ContentItemSerializer
         return ContentItemSerializer
 
     def get_permissions(self):

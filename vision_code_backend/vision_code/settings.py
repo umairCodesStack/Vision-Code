@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'vision_code.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -106,6 +106,21 @@ DATABASES = {
         'PASSWORD': 'admin',      # Password we reset
         'HOST': 'localhost',         # Host
         'PORT': '5432',              # Port
+    }
+    
+}
+'''
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",  
+        "USER": "postgres.oktqnovgjwwzujnqlmoj",  
+        "PASSWORD": "5g&kjZ+8D4NYtZ3",
+        "HOST": "aws-1-ap-south-1.pooler.supabase.com",  
+        "PORT": "5432",
+        "OPTIONS": {
+            "sslmode": "require",
+        },
     }
 }
 

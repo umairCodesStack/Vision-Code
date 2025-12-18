@@ -48,7 +48,6 @@ class ContentItem(models.Model):
     ]
     
     DIFFICULTY_CHOICES = [
-        ('beginner','Beginner'),
         ('easy', 'Easy'),
         ('medium', 'Medium'),
         ('hard', 'Hard'),

@@ -1,25 +1,7 @@
 from django.db import models
 from Courses.models import ContentItem
 from django.conf import settings
-
-class CodingProblem(models.Model):
-    DIFFICULTY_CHOICES = [
-        ('easy', 'Easy'),
-        ('medium', 'Medium'),
-        ('hard', 'Hard'),
-    ]
-    
-    content = models.OneToOneField(ContentItem, on_delete=models.CASCADE, related_name='coding_problem')
-    problem_statement = models.TextField()
-    starter_code = models.JSONField(default=dict)
-    test_cases = models.JSONField(default=list)
-    hints = models.JSONField(default=list)
-    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES)
-    time_limit_minutes = models.IntegerField()
-    
-    class Meta:
-        db_table = 'coding_problems'
-
+from Courses.models import CodingProblem
 class Submission(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='submissions')
     problem = models.ForeignKey(CodingProblem, on_delete=models.CASCADE, related_name='submissions')

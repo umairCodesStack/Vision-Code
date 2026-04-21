@@ -14,6 +14,8 @@ from django.utils import timezone
 # ---------------------------------------------------------
 # ENROLLMENT VIEWSET
 # ---------------------------------------------------------
+
+
 class EnrollmentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = EnrollmentSerializer
@@ -26,7 +28,6 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
 
 # ---------------------------------------------------------
 # USER PROGRESS VIEWSET
@@ -64,3 +65,25 @@ class LearningPathViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count
+from Courses.models import Course
+from Courses.serializers.course import CourseListSerializer
+
+
+class MyCoursesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        courses = Course.objects.filter(
+            enrollments__user=request.user
+        ).select_related("instructor").annotate(
+            total_students=Count("enrollments", distinct=True),
+            total_modules=Count("modules", distinct=True)
+        )
+
+        serializer = CourseListSerializer(courses, many=True)
+        return Response(serializer.data)

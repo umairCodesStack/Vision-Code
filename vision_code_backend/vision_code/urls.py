@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter
 # ViewSets
 from Accounts.views import UserViewSet, SignupView, UserMeView
 from Courses.views import CourseViewSet ,CourseModuleViewSet,ContentItemViewSet
-from Enrollment_Learning.views import EnrollmentViewSet
+from Enrollment_Learning.views import EnrollmentViewSet, MyCoursesView
 
 # JWT
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -55,5 +55,7 @@ urlpatterns = [
     path("api/learning/", include("Enrollment_Learning.urls")),
     path("api/assessments/", include("Assessments.urls")),
     path("api/", include("Gamification.urls")),
+
+
 
 ]

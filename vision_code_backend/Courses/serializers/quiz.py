@@ -6,7 +6,7 @@ from Courses.models import Quiz, QuizQuestion, QuizOption
 class QuizOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuizOption
-        fields = ("id", "text", "is_correct")
+        fields = ("id", "option_text", "is_correct")
 
 
 class QuizQuestionSerializer(serializers.ModelSerializer):
@@ -16,10 +16,14 @@ class QuizQuestionSerializer(serializers.ModelSerializer):
         model = QuizQuestion
         fields = ("id", "question_text", "options")
 
-
 class QuizSerializer(serializers.ModelSerializer):
     questions = QuizQuestionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Quiz
-        fields = ("id", "content_item", "questions")
+        fields = (
+            "id",
+            "total_marks",
+            "passing_marks",
+            "questions",
+        )

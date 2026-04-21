@@ -64,7 +64,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer = EnrollmentSerializer(enrollment)
         return Response(serializer.data, status=201 if created else 200)
 class CourseModuleViewSet(viewsets.ModelViewSet):
-        queryset = CourseModule.objects.select_related("course")
+        queryset = CourseModule.objects.select_related("course").prefetch_related(
+        "content_items__article",
+        "content_items__quiz__questions__options",
+        "content_items__assignment",
+        )
         serializer_class = CourseModuleSerializer
 
         filter_backends = [
@@ -96,8 +100,13 @@ class CourseModuleViewSet(viewsets.ModelViewSet):
 
 class ContentItemViewSet(viewsets.ModelViewSet):
     queryset = ContentItem.objects.select_related(
-        "module",
-        "module__course"
+    "module",
+    "module__course",
+    "article",
+    "quiz",
+    "assignment",
+    ).prefetch_related(
+    "quiz__questions__options"
     )
     serializer_class = ContentItemSerializer
 
@@ -126,3 +135,62 @@ class ContentItemViewSet(viewsets.ModelViewSet):
             )
 
         serializer.save()
+
+from .models import Article, Quiz, QuizQuestion, QuizOption
+from .serializers.article import ArticleSerializer
+from .serializers.quiz import (
+    QuizSerializer,
+    QuizQuestionSerializer,
+    QuizOptionSerializer
+)
+
+# -----------------------------
+# ARTICLE VIEWSET
+# -----------------------------
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Article.objects.select_related("content_item")
+    serializer_class = ArticleSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsInstructorOrAdmin()]
+        return [AllowAny()]
+
+
+# -----------------------------
+# QUIZ VIEWSET
+# -----------------------------
+class QuizViewSet(viewsets.ModelViewSet):
+    queryset = Quiz.objects.select_related("content_item").prefetch_related("questions__options")
+    serializer_class = QuizSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsInstructorOrAdmin()]
+        return [AllowAny()]
+
+
+# -----------------------------
+# QUIZ QUESTION VIEWSET
+# -----------------------------
+class QuizQuestionViewSet(viewsets.ModelViewSet):
+    queryset = QuizQuestion.objects.prefetch_related("options")
+    serializer_class = QuizQuestionSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsInstructorOrAdmin()]
+        return [AllowAny()]
+
+
+# -----------------------------
+# QUIZ OPTION VIEWSET
+# -----------------------------
+class QuizOptionViewSet(viewsets.ModelViewSet):
+    queryset = QuizOption.objects.all()
+    serializer_class = QuizOptionSerializer
+
+    def get_permissions(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsInstructorOrAdmin()]
+        return [AllowAny()]

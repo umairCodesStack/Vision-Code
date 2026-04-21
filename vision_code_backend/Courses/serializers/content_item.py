@@ -9,7 +9,7 @@ from .assignment import AssignmentSerializer
 
 class ContentItemSerializer(serializers.ModelSerializer):
     content_data = serializers.SerializerMethodField()
-
+    type = serializers.CharField(source="content_type")
     class Meta:
         model = ContentItem
         fields = (
@@ -21,6 +21,7 @@ class ContentItemSerializer(serializers.ModelSerializer):
             "estimated_duration_minutes",
             "order",
             "content_data",
+            "type",
         )
 
     def get_content_data(self, obj):

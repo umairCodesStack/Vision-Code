@@ -55,7 +55,7 @@ urlpatterns = [
     path("api/learning/", include("Enrollment_Learning.urls")),
     path("api/assessments/", include("Assessments.urls")),
     path("api/", include("Gamification.urls")),
-
+    path("api/enrollments/", include("Enrollment_Learning.urls")),
 
 
 ]

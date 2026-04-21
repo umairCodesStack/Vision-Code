@@ -32,7 +32,7 @@ class CourseListSerializer(serializers.ModelSerializer):
 
 class CourseDetailSerializer(serializers.ModelSerializer):
     instructor = serializers.SerializerMethodField()
-    modules = CourseModuleSerializer(many=True, read_only=True)
+    #modules = CourseModuleSerializer(many=True, read_only=True)
     total_students = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
     class Meta:
@@ -46,7 +46,6 @@ class CourseDetailSerializer(serializers.ModelSerializer):
             "is_published",
             "price",
             "instructor",
-            "modules",
             "total_students",
             "total_modules",
         )

@@ -12,7 +12,7 @@ class Course(models.Model):
         ('intermediate', 'Intermediate'),
         ('advanced', 'Advanced'),
     ]
-    
+    image_url = models.URLField(blank=True, null=True)
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='courses')
     title = models.CharField(max_length=200)
     description = models.TextField()

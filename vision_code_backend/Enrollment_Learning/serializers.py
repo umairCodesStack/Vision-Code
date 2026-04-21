@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from Courses.models import Course
 from .models import Enrollment, UserProgress, LearningPath
-from Courses.serializers import CourseListSerializer
+from Courses.serializers.course import CourseListSerializer
 from Courses.models import ContentItem
 
 

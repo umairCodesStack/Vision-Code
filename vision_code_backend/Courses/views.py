@@ -7,21 +7,25 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.db.models import Count
 from .models import Course, CourseModule, ContentItem
-from .serializers import (
+from .serializers.course import (
     CourseListSerializer,
-    CourseDetailSerializer,
-    CourseModuleSerializer,
-    ContentItemSerializer,
+    CourseDetailSerializer
 )
+from .serializers.module import CourseModuleSerializer
+from .serializers.content_item import ContentItemSerializer
 
 from Accounts.permissions import IsInstructorOrAdmin
 from Enrollment_Learning.models import Enrollment
 from Enrollment_Learning.serializers import EnrollmentSerializer
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.select_related("instructor")
+    def get_queryset(self):
+        return Course.objects.select_related("instructor").annotate(
+            total_students=Count("enrollments", distinct=True),
+            total_modules=Count("modules", distinct=True)
+        )
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -59,7 +63,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         )
         serializer = EnrollmentSerializer(enrollment)
         return Response(serializer.data, status=201 if created else 200)
-    class CourseModuleViewSet(viewsets.ModelViewSet):
+class CourseModuleViewSet(viewsets.ModelViewSet):
         queryset = CourseModule.objects.select_related("course")
         serializer_class = CourseModuleSerializer
 

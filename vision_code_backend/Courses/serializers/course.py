@@ -6,7 +6,8 @@ from .module import CourseModuleSerializer
 
 class CourseListSerializer(serializers.ModelSerializer):
     instructor = serializers.SerializerMethodField()
-
+    total_students = serializers.IntegerField(read_only=True)
+    total_modules = serializers.IntegerField(read_only=True)
     class Meta:
         model = Course
         fields = (
@@ -18,6 +19,8 @@ class CourseListSerializer(serializers.ModelSerializer):
             "is_published",
             "price",
             "instructor",
+            "total_students",
+            "total_modules",
         )
 
     def get_instructor(self, obj):
@@ -30,7 +33,8 @@ class CourseListSerializer(serializers.ModelSerializer):
 class CourseDetailSerializer(serializers.ModelSerializer):
     instructor = serializers.SerializerMethodField()
     modules = CourseModuleSerializer(many=True, read_only=True)
-
+    total_students = serializers.IntegerField(read_only=True)
+    total_modules = serializers.IntegerField(read_only=True)
     class Meta:
         model = Course
         fields = (
@@ -43,6 +47,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
             "price",
             "instructor",
             "modules",
+            "total_students",
+            "total_modules",
         )
 
     def get_instructor(self, obj):

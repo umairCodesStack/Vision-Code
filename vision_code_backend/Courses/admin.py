@@ -24,8 +24,8 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(CourseModule)
 class CourseModuleAdmin(admin.ModelAdmin):
-    list_display = ("id", "course", "title", "order")
-    ordering = ("order",)
+    list_display = ("id", "course", "title", "module_order")
+    ordering = ("module_order",)
 
 
 # ----------------------------
@@ -73,7 +73,7 @@ class QuizQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(QuizOption)
 class QuizOptionAdmin(admin.ModelAdmin):
-    list_display = ("id", "question", "text", "is_correct")
+    list_display = ("id", "question","option_text", "is_correct")
 
 
 # ----------------------------

@@ -1,5 +1,7 @@
 
 # Enrollment_Learning/views.py
+from urllib import response
+
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
 from .models import Enrollment, UserProgress, LearningPath
@@ -86,4 +88,4 @@ class MyCoursesView(APIView):
         )
 
         serializer = CourseListSerializer(courses, many=True)
-        return Response(serializer.data)
+        return response(serializer.data)

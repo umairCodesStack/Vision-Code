@@ -10,6 +10,10 @@ import CoursesPage from "./pages/CoursesPage";
 import CommunityPage from "./pages/CommunityPage";
 import CourseDetail from "./pages/CourseDetail";
 import { Toaster } from "sonner";
+import StudentCourseDetail from "./pages/StudentCourseDetail";
+import QuizPage from "./pages/QuizPage";
+import InstructorDashboard from "./pages/InstructorDashboard";
+import CreateCoursePage from "./pages/CreateCourse";
 export const APP_NAME = "Vision-Code";
 
 const queryClient = new QueryClient();
@@ -25,6 +29,16 @@ function App() {
             <Route path="courses" element={<CoursesPage />} />
             <Route path="course/:id" element={<CourseDetail />} />
             <Route path="community" element={<CommunityPage />} />
+            <Route
+              path="/student/course/:courseId"
+              element={<StudentCourseDetail />}
+            />
+            <Route
+              path="/instructor/create-course"
+              element={<CreateCoursePage />}
+            />
+            <Route path="/instructor" element={<InstructorDashboard />} />
+            <Route path="/student/quiz/:id" element={<QuizPage />} />
             <Route
               path="app"
               element={

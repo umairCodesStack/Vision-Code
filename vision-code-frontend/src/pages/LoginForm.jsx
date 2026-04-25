@@ -8,9 +8,17 @@ function LoginForm() {
   const [password, setPassword] = useState("vision-code");
   const { login, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login.mutate({ email, password });
+
+    try {
+      const data = await login.mutateAsync({ email, password });
+      console.log("Login response:", data);
+      console.log("is pending:", login.isPending);
+      navigate("/dashboard"); // redirect after success
+    } catch (err) {
+      console.log("Login error:", err);
+    }
   };
 
   const handleGoogleLogin = () => {};
@@ -53,6 +61,7 @@ function LoginForm() {
         </div>
         <Button
           type="submit"
+          disabled={login.isPending}
           className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold transition"
         >
           Sign In

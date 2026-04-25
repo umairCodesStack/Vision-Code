@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/de042833-2d18-459d-a1cb-42139f930a85/resourceGroups/Resourse-group01/providers/Microsoft.Web/sites/Vision-code-backend",
+  "appService.deploySubpath": "."
+}

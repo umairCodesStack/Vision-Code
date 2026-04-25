@@ -1,7 +1,6 @@
 import { createContext, useContext, useReducer } from "react";
 import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
+import { toast } from "sonner";
 import { API_URL } from "../constants";
 
 const AuthContext = createContext();

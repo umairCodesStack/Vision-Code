@@ -116,7 +116,6 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("enrolled");
   const { isAuthenticated, logout } = useAuth();
   const token = localStorage.getItem("access_token");
-  console.log(token);
   useEffect(() => {
     if (!isAuthenticated || !token) {
       navigate("/login");

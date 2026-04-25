@@ -8,7 +8,7 @@ import NavBar from "../components/NavBar";
 import SkillsSection from "../components/SkillsSection";
 import Stats from "../components/Stats";
 import useScrollAnimation from "../hooks/useScrollAnimation";
-const APP_NAME = "Vision-Code";
+export const APP_NAME = "Vision-Code";
 
 function HomePage() {
   useScrollAnimation();

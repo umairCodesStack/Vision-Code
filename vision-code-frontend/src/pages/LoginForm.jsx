@@ -10,7 +10,7 @@ function LoginForm() {
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(email, password);
+    login.mutate({ email, password });
   };
 
   const handleGoogleLogin = () => {};

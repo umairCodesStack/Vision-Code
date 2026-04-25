@@ -1,9 +1,8 @@
 import { createContext, useContext, useReducer } from "react";
-const FAKE_USER = {
-  name: "Vision-Code",
-  email: "info@vision-code.dev",
-  password: "vision-code",
-};
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+
+import { API_URL } from "../constants";
 
 const AuthContext = createContext();
 
@@ -16,18 +15,14 @@ function reducer(state, action) {
         ...state,
         user: action.payload,
         isAuthenticated: true,
+        error: null,
       };
     case "logout":
-      return {
-        ...state,
-        user: null,
-        isAuthenticated: false,
-      };
+      return { ...state, user: null, isAuthenticated: false };
     case "signup":
-      return {
-        ...state,
-        user: action.payload,
-      };
+      return { ...state, user: action.payload };
+    case "error": // ✅ FIX 1: missing "error" case
+      return { ...state, error: action.payload };
     default:
       throw new Error("Unknown action type");
   }
@@ -38,84 +33,77 @@ function AuthProvider({ children }) {
     reducer,
     initialState,
   );
-  async function loginApi(email, password) {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/auth/token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+  async function loginApi({ email, password }) {
+    // ✅ FIX 2: destructure object (mutationFn receives one arg)
+    const res = await fetch(`${API_URL}/api/auth/token/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
-      console.log("Login successful:", data);
-      return data;
-    } catch (error) {
-      console.error("Login failed:", error);
-      throw error;
-    }
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const data = await res.json();
+    return data;
   }
-  async function signupApi(firstName, lastName, email, password) {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/auth/signup/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-        }),
-      });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      console.log("Signup successful");
-      return res;
-    } catch (error) {
-      console.error("Signup failed:", error);
-      throw error;
-    }
+  async function signupApi({ firstName, lastName, email, password }) {
+    // ✅ FIX 2: same here
+    const res = await fetch(`${API_URL}/api/auth/signup/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstName, lastName, email, password }),
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return res;
   }
-  async function login(email, password) {
-    const token = await loginApi(email, password);
-    console.log(token);
-    if (token) {
-      localStorage.setItem("access_token", token.access);
-      localStorage.setItem("access_token", token.access);
-      localStorage.setItem("refresh_token", token.refresh);
-      dispatch({
-        type: "login",
-        payload: { email, password },
-      });
-    } else {
+
+  // ✅ FIX 3: hooks cannot be called inside regular functions — move useMutation to top level
+  const loginMutation = useMutation({
+    mutationFn: loginApi,
+    onSuccess: (data, variables) => {
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
+      dispatch({ type: "login", payload: { email: variables.email } }); // ✅ FIX 4: never store password in state
+      toast.success("Login successful 🎉");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Login failed ❌");
       dispatch({ type: "error", payload: "Invalid Credentials" });
-    }
-  }
-  async function signup(firstName, lastName, email, password) {
-    const res = await signupApi(firstName, lastName, email, password);
-    if (res.ok) {
-      dispatch({ type: "signup", payload: { email, password } });
-    }
-  }
+    },
+  });
+
+  // ✅ FIX 5: similarly hoist signupMutation
+  const signupMutation = useMutation({
+    mutationFn: signupApi,
+    onSuccess: (_, variables) => {
+      dispatch({ type: "signup", payload: { email: variables.email } });
+      toast.success("Signup successful 🎉");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Signup failed ❌");
+    },
+  });
+
   function logout() {
+    localStorage.removeItem("access_token"); // ✅ FIX 6: clear tokens on logout
+    localStorage.removeItem("refresh_token");
     dispatch({ type: "logout" });
   }
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, user, isAuthenticated, dispatch, signup }}
+      value={{
+        login: loginMutation, // ✅ FIX 7: expose the mutation object, not a function wrapper
+        signup: signupMutation,
+        logout,
+        user,
+        isAuthenticated,
+        error,
+        dispatch,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -124,9 +112,8 @@ function AuthProvider({ children }) {
 
 function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (context === undefined)
     throw new Error("Context was used out of the Auth Provider");
-  }
   return context;
 }
 

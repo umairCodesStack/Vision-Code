@@ -136,7 +136,7 @@ export default function InstructorDashboard() {
 
       if (!token) throw new Error("No authentication token found");
       if (!userId) throw new Error("User ID not found in token");
-
+      console.log("Decoded token:", decodedToken);
       const [profileRes, coursesRes] = await Promise.all([
         fetch(`${API_URL}/api/accounts/users/${userId}/`, {
           headers: {
@@ -144,7 +144,8 @@ export default function InstructorDashboard() {
             Authorization: `Bearer ${token}`,
           },
         }),
-        fetch(`${API_URL}/api/enrollments/my-courses/`, {
+
+        fetch(`${API_URL}/api/courses/courses/?instructor=${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

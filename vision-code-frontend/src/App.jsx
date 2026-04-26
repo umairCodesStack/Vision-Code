@@ -14,6 +14,8 @@ import StudentCourseDetail from "./pages/StudentCourseDetail";
 import QuizPage from "./pages/QuizPage";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import CreateCoursePage from "./pages/CreateCourse";
+import ProctoringComponent from "./pages/ProctoringComponent";
+import InstructorCourseDetail from "./pages/InstructorCourseDetail";
 export const APP_NAME = "Vision-Code";
 
 const queryClient = new QueryClient();
@@ -33,9 +35,14 @@ function App() {
               path="/student/course/:courseId"
               element={<StudentCourseDetail />}
             />
+            <Route path="/proctoring" element={<ProctoringComponent />} />
             <Route
               path="/instructor/create-course"
               element={<CreateCoursePage />}
+            />
+            <Route
+              path="/instructor/course/:courseId"
+              element={<InstructorCourseDetail />}
             />
             <Route path="/instructor" element={<InstructorDashboard />} />
             <Route path="/student/quiz/:id" element={<QuizPage />} />

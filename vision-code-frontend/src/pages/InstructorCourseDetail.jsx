@@ -1058,10 +1058,25 @@ function ContentItemCard({ item }) {
       </div>
 
       {item.content_type === "article" && <ArticlePreview item={item} />}
+      {item.content_type === "quiz" && <QuizPreview item={item} />}
     </div>
   );
 }
+function QuizPreview({ item }) {
+  console.log("Quiz data: questions", item.content_data?.questions);
+  const totalQuestions =
+    item.content_data?.questions?.length || item.total_questions || 0;
+  return (
+    <div className="mt-3 text-xs text-gray-600 bg-gray-50 rounded-lg p-3 border">
+      <p className="font-medium text-gray-800 mb-1">Quiz Preview</p>
 
+      <div className="flex items-center gap-4 text-gray-500">
+        <span>📝 {totalQuestions} Questions</span>
+        <span>⏱ {item.estimated_duration_minutes || 0} mins</span>
+      </div>
+    </div>
+  );
+}
 // ─── Module Card ──────────────────────────────────────────────────────────────
 
 function ModuleCard({ module, index, onAddItem, token }) {
@@ -1191,6 +1206,7 @@ export default function InstructorCourseDetail() {
 
   const { data: course, isLoading, error, refetch } = useCourseDetail(id);
   const { logout, user } = useAuth();
+  console.log("Course Detail:", course);
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
 
   const token = localStorage.getItem("access_token");
@@ -1198,6 +1214,7 @@ export default function InstructorCourseDetail() {
   const level = course?.difficulty_level?.toLowerCase();
   const gradient = levelGradients[level] || "from-blue-500 to-indigo-600";
   const icon = levelIcons[level] || "📖";
+  console.log("Course Data:", course?.modules);
 
   const initials = user
     ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()
@@ -1342,10 +1359,10 @@ export default function InstructorCourseDetail() {
                 </span>
               </div>
             </div>
-            <button className="px-4 py-2.5 bg-white text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-50 transition flex items-center gap-2 flex-shrink-0 h-fit">
+            {/* <button className="px-4 py-2.5 bg-white text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-50 transition flex items-center gap-2 flex-shrink-0 h-fit">
               <Edit className="w-4 h-4" />
               Edit Course
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -1435,10 +1452,10 @@ export default function InstructorCourseDetail() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               <h3 className="font-bold text-gray-900 mb-4">Course Actions</h3>
               <div className="space-y-2">
-                <button className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                {/* <button className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
                   <Edit className="w-4 h-4" />
                   Edit Course
-                </button>
+                </button> */}
                 <button className="w-full py-2.5 px-4 bg-gray-100 text-gray-900 rounded-lg font-semibold text-sm hover:bg-gray-200 transition">
                   Preview as Student
                 </button>

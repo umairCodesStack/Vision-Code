@@ -85,12 +85,12 @@ function CourseCard({ course, onEdit, onDelete }) {
         >
           <Eye className="w-3.5 h-3.5" /> View
         </Link>
-        <button
+        {/* <button
           onClick={() => onEdit(course)}
           className="px-3 py-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-50 transition"
         >
           <Edit className="w-3.5 h-3.5" />
-        </button>
+        </button> */}
         <button
           onClick={() => onDelete(course.id)}
           className="px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-50 transition"

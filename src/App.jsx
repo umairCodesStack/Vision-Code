@@ -16,6 +16,7 @@ import InstructorDashboard from "./pages/InstructorDashboard";
 import CreateCoursePage from "./pages/CreateCourse";
 import ProctoringComponent from "./pages/ProctoringComponent";
 import InstructorCourseDetail from "./pages/InstructorCourseDetail";
+import SignupForm from "./pages/SignupForm";
 export const APP_NAME = "Vision-Code";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ function App() {
                 </ProtectedRouter>
               }
             />
+            <Route path="/signup" element={<SignupForm />} />
             <Route path="login" element={<LoginForm />} />
           </Routes>
         </AuthProvider>

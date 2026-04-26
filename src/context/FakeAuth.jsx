@@ -47,12 +47,12 @@ function AuthProvider({ children }) {
     return data;
   }
 
-  async function signupApi({ firstName, lastName, email, password }) {
+  async function signupApi({ firstName, lastName, email, password, role }) {
     // ✅ FIX 2: same here
     const res = await fetch(`${API_URL}/api/auth/signup/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, lastName, email, password }),
+      body: JSON.stringify({ firstName, lastName, email, password, role }),
     });
 
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);

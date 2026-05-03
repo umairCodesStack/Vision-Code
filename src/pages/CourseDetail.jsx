@@ -178,18 +178,6 @@ export default function CourseDetail() {
         >
           Courses
         </NavLink>
-        <NavLink
-          to="/community"
-          className="text-gray-700 hover:text-blue-600 font-medium transition"
-        >
-          Community
-        </NavLink>
-        <NavLink
-          to="/practice"
-          className="text-gray-700 hover: text-blue-600 font-medium transition"
-        >
-          Practice
-        </NavLink>
       </NavBar>
       {/* ── Hero Banner (mirrors CourseCard header) ── */}
       <div className={`relative bg-gradient-to-br ${gradient} overflow-hidden`}>

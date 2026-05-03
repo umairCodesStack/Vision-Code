@@ -41,22 +41,10 @@ function CoursesPage() {
         >
           Courses
         </NavLink>
-        <NavLink
-          to="/community"
-          className="text-gray-700 hover:text-blue-600 font-medium transition"
-        >
-          Community
-        </NavLink>
-        <NavLink
-          to="/practice"
-          className="text-gray-700 hover: text-blue-600 font-medium transition"
-        >
-          Practice
-        </NavLink>
       </Navbar>
 
       <CourseHero />
-      <CourseFilters />
+      {/* <CourseFilters /> */}
       <CourseGrid />
       <NewsLetter />
       <Footer />

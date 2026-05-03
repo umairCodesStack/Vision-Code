@@ -24,8 +24,8 @@ function CourseHero() {
           and advance your career.
         </p>
 
-        <SearchBar />
-        <CategoryPills />
+        {/* <SearchBar />
+        <CategoryPills /> */}
       </div>
     </div>
   );

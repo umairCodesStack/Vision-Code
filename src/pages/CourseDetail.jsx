@@ -62,10 +62,10 @@ export default function CourseDetail() {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState("");
 
-  const isAuthenticated = localStorage.getItem("access_token");
+  const token = localStorage.getItem("access_token");
 
   const handleEnrollClick = async () => {
-    if (!isAuthenticated) {
+    if (!token) {
       navigate("/login");
       return;
     }
@@ -368,7 +368,7 @@ export default function CourseDetail() {
                 )}
 
                 {/* Auth notice */}
-                {!isAuthenticated && (
+                {!token && (
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
                     <p className="font-semibold mb-0.5">Sign in required</p>
                     <p>Please sign in to enroll in this course.</p>
@@ -383,7 +383,7 @@ export default function CourseDetail() {
                 >
                   {isEnrolling
                     ? "Enrolling..."
-                    : isAuthenticated
+                    : token
                       ? isFree
                         ? "Enroll Free"
                         : "Enroll Now"

@@ -2,6 +2,12 @@ import { useParams, Link, useNavigate, NavLink } from "react-router-dom";
 import { toast } from "sonner";
 import NavBar from "../components/NavBar";
 import { useAuth } from "../context/FakeAuth";
+import CourseDetailSkeleton from "../components/CourseDetailSkeleton";
+
+import { useCourseDetail } from "../hooks/useCourseDetail";
+import { enrollCourse } from "../services/enrollmentApi";
+import { use, useState } from "react";
+import { APP_NAME } from "./HomePage";
 import {
   ArrowLeft,
   BookOpen,
@@ -17,10 +23,8 @@ import {
   ChevronUp,
   Zap,
 } from "lucide-react";
-import { useCourseDetail } from "../hooks/useCourseDetail";
-import { enrollCourse } from "../services/enrollmentApi";
-import { useState } from "react";
-import { APP_NAME } from "./HomePage";
+import ModuleAccordion from "../components/ModuleAccridon";
+import { capitalize, formatDuration } from "../utils/util";
 
 // ─── Constants (mirrors CourseCard) ──────────────────────────────────────────
 
@@ -45,143 +49,7 @@ const levelIcons = {
   "all levels": "🎯",
 };
 
-const contentTypeIcons = {
-  article: BookOpen,
-  quiz: HelpCircle,
-  exercise: Code,
-  video: PlayCircle,
-};
-
-const contentTypeColors = {
-  article: "text-blue-600 bg-blue-50 border-blue-200",
-  quiz: "text-purple-600 bg-purple-50 border-purple-200",
-  exercise: "text-orange-600 bg-orange-50 border-orange-200",
-  video: "text-green-600 bg-green-50 border-green-200",
-};
-
-const capitalize = (str) => {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-};
-
-const formatDuration = (minutes) => {
-  if (!minutes) return "0 mins";
-  if (minutes < 60) return `${minutes}m`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
-};
-
 // ─── Module Accordion ─────────────────────────────────────────────────────────
-
-function ModuleAccordion({ module, idx }) {
-  const [open, setOpen] = useState(idx === 0);
-
-  const totalDuration = module.content_items?.reduce(
-    (sum, item) => sum + (item.estimated_duration_minutes || 0),
-    0,
-  );
-
-  return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
-      {/* Accordion Header */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-4 p-4 bg-white hover:bg-gray-50 transition-colors text-left"
-      >
-        <div className="w-9 h-9 flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-          {String(idx + 1).padStart(2, "0")}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-gray-900 text-sm truncate">
-            {module.title}
-          </p>
-          <p className="text-xs text-gray-500 truncate">{module.description}</p>
-        </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="text-xs text-gray-400 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {formatDuration(totalDuration)}
-          </span>
-          <span className="text-xs text-gray-400">
-            {module.content_items?.length || 0} items
-          </span>
-          {open ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          )}
-        </div>
-      </button>
-
-      {/* Accordion Body */}
-      {open && (
-        <div className="border-t border-gray-100 bg-gray-50 p-4 space-y-4">
-          {/* Learning Objectives */}
-          {module.learning_objectives?.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                What you'll learn
-              </p>
-              <ul className="space-y-1.5">
-                {module.learning_objectives.map((obj, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-sm text-gray-700"
-                  >
-                    <CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
-                    {typeof obj === "string"
-                      ? obj
-                      : (obj?.title ?? JSON.stringify(obj))}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Content Items */}
-          {module.content_items?.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Content
-              </p>
-              <div className="space-y-2">
-                {module.content_items.map((item) => {
-                  const Icon = contentTypeIcons[item.content_type] || BookOpen;
-                  const colorClass =
-                    contentTypeColors[item.content_type] ||
-                    "text-gray-600 bg-gray-50 border-gray-200";
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-2.5 bg-white rounded-lg border border-gray-200"
-                    >
-                      <div className={`p-1.5 rounded-md border ${colorClass}`}>
-                        <Icon className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="flex-1 text-sm text-gray-800 truncate">
-                        {item.title}
-                      </span>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded-full border font-medium ${colorClass}`}
-                      >
-                        {item.content_type}
-                      </span>
-                      <span className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0">
-                        <Clock className="w-3 h-3" />
-                        {item.estimated_duration_minutes}m
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -196,7 +64,6 @@ export default function CourseDetail() {
 
   const isAuthenticated = localStorage.getItem("access_token");
 
-  console.log("Is authenticated?", isAuthenticated);
   const handleEnrollClick = async () => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -206,7 +73,7 @@ export default function CourseDetail() {
     setEnrollError("");
     try {
       const token = localStorage.getItem("access_token");
-      console.log("Token for enrolling", token);
+
       if (!token) {
         setEnrollError("Authentication token not found. Please login again.");
         return;
@@ -227,14 +94,7 @@ export default function CourseDetail() {
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">Loading course...</p>
-        </div>
-      </div>
-    );
+    return <CourseDetailSkeleton />;
   }
 
   // ── Error ──────────────────────────────────────────────────────────────────
@@ -389,14 +249,14 @@ export default function CourseDetail() {
                   <BookOpen className="w-4 h-4" />
                   {course.total_modules} modules
                 </span>
-                <span className="flex items-center gap-1.5">
+                {/* <span className="flex items-center gap-1.5">
                   <Zap className="w-4 h-4" />
                   {totalItems} lessons
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4" />
                   {formatDuration(totalDuration)}
-                </span>
+                </span> */}
                 <span className="flex items-center gap-1.5">
                   <Users className="w-4 h-4" />
                   {course.total_students?.toLocaleString()} students
@@ -436,7 +296,8 @@ export default function CourseDetail() {
               </div>
             </div>
 
-            {/* Topics */}
+            {/* Topics ]
+
             {course.topics?.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -465,7 +326,11 @@ export default function CourseDetail() {
               </h2>
               <div className="space-y-3">
                 {course.modules?.map((module, idx) => (
-                  <ModuleAccordion key={module.id} module={module} idx={idx} />
+                  <ModuleAccordion
+                    key={module.id}
+                    moduleData={module}
+                    idx={idx}
+                  />
                 ))}
               </div>
             </div>

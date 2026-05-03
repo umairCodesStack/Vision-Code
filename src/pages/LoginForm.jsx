@@ -17,7 +17,6 @@ function LoginForm() {
 
     try {
       const data = await login.mutateAsync({ email, password });
-      console.log("Login response:", data);
       navigate("/dashboard");
     } catch (err) {
       console.log("Login error:", err);

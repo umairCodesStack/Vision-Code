@@ -1,7 +1,5 @@
 function CommunityHeader() {
-  const handleNewPost = () => {
-    console.log("Create new post");
-  };
+  const handleNewPost = () => {};
 
   return (
     <div className="bg-white  sticky top-16 z-40">

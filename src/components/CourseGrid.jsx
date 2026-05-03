@@ -1,5 +1,6 @@
 import CourseCard from "./CourseCard";
 import Button from "./Button";
+import CourseGridSkeleton from "./CourseGridSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { callCoursesApi } from "../services/coursesApi";
 import { useState } from "react";
@@ -11,7 +12,6 @@ function CourseGrid() {
     queryKey: ["courses"],
     queryFn: callCoursesApi,
   });
-  console.log("CourseGrid data:", data);
   const courses = Array.isArray(data) ? data : (data?.results ?? []);
 
   return (
@@ -41,13 +41,7 @@ function CourseGrid() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3].map((n) => (
-            <div key={n} className="bg-white p-6 rounded-lg animate-pulse h-48" />
-          ))}
-        </div>
-      )}
+      {isLoading && <CourseGridSkeleton />}
 
       {/* Error */}
       {error && !isLoading && (

@@ -6,7 +6,7 @@ function NewsletterCTA() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    console.log("Subscribing email:", email);
+
     // Add subscription logic here
     setEmail("");
   };

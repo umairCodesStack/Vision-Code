@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { API_URL } from "../constants";
 import { useAuth } from "../context/FakeAuth";
+import InstructorDashboardSkeleton from "../components/InstructorDashboardSkeleton";
 
 // ─── Course Card ──────────────────────────────────────────────────────────────
 
@@ -115,6 +116,7 @@ export default function InstructorDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [totalStudents, setTotalStudents] = useState(0);
 
   // Fetch instructor data
   useEffect(() => {
@@ -136,7 +138,6 @@ export default function InstructorDashboard() {
 
       if (!token) throw new Error("No authentication token found");
       if (!userId) throw new Error("User ID not found in token");
-      console.log("Decoded token:", decodedToken);
       const [profileRes, coursesRes] = await Promise.all([
         fetch(`${API_URL}/api/accounts/users/${userId}/`, {
           headers: {
@@ -166,10 +167,12 @@ export default function InstructorDashboard() {
         profileRes.json(),
         coursesRes.json(),
       ]);
-      console.log("corse data:", coursesData);
       setInstructorProfile(profile);
       setCourses(
         Array.isArray(coursesData) ? coursesData : (coursesData?.results ?? []),
+      );
+      setTotalStudents(
+        courses.reduce((sum, c) => sum + (c.total_students ?? 0), 0),
       );
     } catch (err) {
       console.error("Fetch error:", err);
@@ -218,10 +221,6 @@ export default function InstructorDashboard() {
       }`.toUpperCase()
     : "I";
 
-  const totalStudents = courses.reduce(
-    (sum, c) => sum + (c.enrolled_count ?? 0),
-    0,
-  );
   const totalHours = courses.reduce(
     (sum, c) => sum + (c.duration_hours ?? 0),
     0,
@@ -230,14 +229,7 @@ export default function InstructorDashboard() {
   // ── Loading ────────────────────────────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
+    return <InstructorDashboardSkeleton />;
   }
 
   return (

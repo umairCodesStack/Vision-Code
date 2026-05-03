@@ -27,7 +27,6 @@ function SignupForm() {
         lastName,
         role,
       });
-      console.log("Signup response:", data);
       navigate("/app");
     } catch (err) {
       console.log("Signup error:", err);

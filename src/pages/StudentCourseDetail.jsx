@@ -23,6 +23,10 @@ import {
 
 import { useAuth } from "../context/FakeAuth";
 import { useCourseDetail } from "../hooks/useCourseDetail";
+import { useQuery } from "@tanstack/react-query";
+import { getCourseModules } from "../services/courseDetail";
+import ModuleCard from "../components/ModuleCard";
+import StudentCourseDetailSkeleton from "../components/StudentCourseDetailSkeleton";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -40,288 +44,12 @@ const levelIcons = {
   "all levels": "🎯",
 };
 
-const getDifficultyColor = (level) => {
-  switch (level) {
-    case "beginner":
-      return "bg-green-100 text-green-700 border border-green-200";
-    case "intermediate":
-      return "bg-purple-100 text-purple-700 border border-purple-200";
-    case "advanced":
-      return "bg-orange-100 text-orange-700 border border-orange-200";
-    default:
-      return "bg-gray-100 text-gray-700 border border-gray-200";
-  }
-};
-
 const getProgressColor = (progress) => {
   if (progress >= 75) return "from-green-500 to-emerald-500";
   if (progress >= 50) return "from-blue-500 to-indigo-500";
   if (progress >= 25) return "from-yellow-500 to-orange-500";
   return "from-red-500 to-pink-500";
 };
-
-const contentTypeConfig = {
-  article: {
-    icon: BookOpen,
-    color: "text-blue-500",
-    badge: "bg-blue-50 text-blue-700 border-blue-200",
-    label: "Article",
-  },
-  quiz: {
-    icon: HelpCircle,
-    color: "text-purple-500",
-    badge: "bg-purple-50 text-purple-700 border-purple-200",
-    label: "Quiz",
-  },
-  exercise: {
-    icon: Code,
-    color: "text-orange-500",
-    badge: "bg-orange-50 text-orange-700 border-orange-200",
-    label: "Exercise",
-  },
-  video: {
-    icon: Play,
-    color: "text-green-500",
-    badge: "bg-green-50 text-green-700 border-green-200",
-    label: "Video",
-  },
-};
-
-// ─── Article Expand ───────────────────────────────────────────────────────────
-
-function ArticleExpand({ item }) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <div className="mt-3">
-      <button
-        onClick={() => setExpanded((v) => !v)}
-        className="flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-all"
-      >
-        <FileText className="w-3.5 h-3.5" />
-        {expanded ? "Close Article" : "Read Article"}
-        {expanded ? (
-          <ChevronUp className="w-3 h-3" />
-        ) : (
-          <ChevronDown className="w-3 h-3" />
-        )}
-      </button>
-
-      {expanded && (
-        <div className="mt-3 border border-gray-200 rounded-xl bg-gray-50 p-4 text-sm text-gray-700 leading-relaxed">
-          {item.content_data?.body ? (
-            <div
-              className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: item.content_data.body }}
-            />
-          ) : (
-            <div className="space-y-3 text-gray-500">
-              <p className="font-semibold text-gray-900">{item.title}</p>
-              <p>
-                This article covers the fundamentals of{" "}
-                <span className="text-blue-600 font-medium">{item.title}</span>.
-                Work through the material at your own pace — estimated reading
-                time is{" "}
-                <span className="font-medium">
-                  {item.estimated_duration_minutes} minutes
-                </span>
-                .
-              </p>
-              <p>
-                Content will be loaded from the server. If you see this
-                placeholder, the{" "}
-                <code className="bg-gray-200 px-1 py-0.5 rounded text-xs">
-                  content_data
-                </code>{" "}
-                field has not been populated yet.
-              </p>
-              <div className="flex items-center gap-2 pt-2 border-t border-gray-200 text-xs text-gray-400">
-                <Clock className="w-3.5 h-3.5" />~
-                {item.estimated_duration_minutes} min read
-                <span className="ml-auto capitalize">
-                  {item.difficulty || "standard"} level
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Quiz Button ──────────────────────────────────────────────────────────────
-
-function QuizStartButton({ item, courseId, moduleId }) {
-  const navigate = useNavigate();
-
-  return (
-    <div className="mt-3">
-      <button
-        onClick={() =>
-          navigate(`/student/quiz/${item.id}`, {
-            state: {
-              quizData: item.content_data,
-              title: item.title,
-              courseId,
-              moduleId,
-              estimatedMinutes: item.estimated_duration_minutes,
-            },
-          })
-        }
-        className="flex items-center gap-2 text-xs font-semibold text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 rounded-lg transition-all"
-      >
-        <Play className="w-3.5 h-3.5 fill-purple-500" />
-        Start Quiz
-        {item.content_data && (
-          <span className="bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
-            {item.content_data.questions?.length || 0}Q
-          </span>
-        )}
-      </button>
-    </div>
-  );
-}
-
-// ─── Content Item Card ────────────────────────────────────────────────────────
-
-function ContentItemCard({ item, courseId, moduleId }) {
-  const config =
-    contentTypeConfig[item.content_type] || contentTypeConfig.article;
-  const Icon = config.icon;
-
-  return (
-    <div className="border border-gray-100 rounded-xl p-3 hover:border-blue-200 hover:shadow-sm transition-all bg-white">
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${config.badge} border`}
-        >
-          <Icon className="w-4 h-4" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate">
-            {item.title}
-          </p>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full border font-medium ${config.badge}`}
-            >
-              {config.label}
-            </span>
-            <span className="text-xs text-gray-400 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {item.estimated_duration_minutes}m
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {item.content_type === "article" && <ArticleExpand item={item} />}
-      {item.content_type === "quiz" && (
-        <QuizStartButton item={item} courseId={courseId} moduleId={moduleId} />
-      )}
-    </div>
-  );
-}
-
-// ─── Module Card ──────────────────────────────────────────────────────────────
-
-function ModuleCard({ module, index, courseId }) {
-  const [open, setOpen] = useState(index === 0);
-
-  const totalMinutes = module.content_items.reduce(
-    (sum, item) => sum + (item.estimated_duration_minutes || 0),
-    0,
-  );
-
-  return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden">
-      {/* Module Header */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-4 p-5 text-left hover:bg-gray-50 transition-colors"
-      >
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-          {String(index + 1).padStart(2, "0")}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-bold text-gray-900 text-sm">{module.title}</p>
-          <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
-            {module.description}
-          </p>
-        </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <div className="hidden sm:flex items-center gap-3 text-xs text-gray-400">
-            <span className="flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5" />
-              {module.content_items.length} items
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              {totalMinutes}m
-            </span>
-          </div>
-          {open ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
-          )}
-        </div>
-      </button>
-
-      {/* Module Body */}
-      {open && (
-        <div className="border-t border-gray-100 p-5 space-y-4">
-          {/* Learning Objectives */}
-          {module.learning_objectives?.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Learning Objectives
-              </p>
-              <ul className="space-y-1.5">
-                {module.learning_objectives.slice(0, 3).map((obj, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-xs text-gray-600"
-                  >
-                    <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    {typeof obj === "string"
-                      ? obj
-                      : (obj.title ?? JSON.stringify(obj))}
-                  </li>
-                ))}
-                {module.learning_objectives.length > 3 && (
-                  <li className="text-xs text-blue-600 font-medium ml-5">
-                    +{module.learning_objectives.length - 3} more objectives
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
-
-          {/* Content Items */}
-          <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-              Content ({module.content_items.length})
-            </p>
-            <div className="space-y-2">
-              {module.content_items.map((item) => (
-                <ContentItemCard
-                  key={item.id}
-                  item={item}
-                  courseId={courseId}
-                  moduleId={module.id}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function StudentCourseDetail() {
   const { courseId } = useParams();
@@ -352,14 +80,7 @@ export default function StudentCourseDetail() {
   // ── Loading ──────────────────────────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">Loading course details...</p>
-        </div>
-      </div>
-    );
+    return <StudentCourseDetailSkeleton />;
   }
 
   // ── Error ────────────────────────────────────────────────────────────────
@@ -482,26 +203,6 @@ export default function StudentCourseDetail() {
           </div>
         </div>
 
-        {/* ── Progress Bar (if enrolled) ── */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <p className="font-semibold text-gray-900 text-sm">Your Progress</p>
-            <span className="text-sm font-bold text-blue-600">{progress}%</span>
-          </div>
-          <div className="w-full bg-gray-100 rounded-full h-2.5">
-            <div
-              className={`bg-gradient-to-r ${getProgressColor(progress)} h-2.5 rounded-full transition-all duration-500`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex items-center justify-between mt-2 text-xs text-gray-400">
-            <span>{completed ? "✅ Course completed!" : "Keep going!"}</span>
-            {enrolled_at && (
-              <span>Enrolled {new Date(enrolled_at).toLocaleDateString()}</span>
-            )}
-          </div>
-        </div>
-
         {/* ── Main Grid ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left — Modules */}
@@ -536,7 +237,7 @@ export default function StudentCourseDetail() {
                 {course.modules.map((module, idx) => (
                   <ModuleCard
                     key={module.id}
-                    module={module}
+                    moduleData={module}
                     index={idx}
                     courseId={id}
                   />

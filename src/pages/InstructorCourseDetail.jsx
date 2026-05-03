@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   BookOpen,
@@ -26,6 +27,8 @@ import {
 
 import { useAuth } from "../context/FakeAuth";
 import { useCourseDetail } from "../hooks/useCourseDetail";
+import { getCourseModules } from "../services/courseDetail";
+import InstructorCourseDetailSkeleton from "../components/InstructorCourseDetailSkeleton";
 
 import { API_URL } from "../constants";
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -1020,6 +1023,13 @@ function ContentItemCard({ item }) {
   const config =
     contentTypeConfig[item.content_type] || contentTypeConfig.article;
   const Icon = config.icon;
+  function handleDelete() {
+    if (item.content_type === "article") {
+      // call delete article api
+    } else if (item.content_type === "quiz") {
+      // call delete quiz api
+    }
+  }
 
   return (
     <div className="border border-gray-100 rounded-xl p-4 hover:border-blue-200 hover:shadow-sm transition-all bg-white group">
@@ -1048,10 +1058,10 @@ function ContentItemCard({ item }) {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
-            <Edit className="w-4 h-4" />
-          </button>
-          <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+          <button
+            onClick={handleDelete}
+            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+          >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -1063,7 +1073,6 @@ function ContentItemCard({ item }) {
   );
 }
 function QuizPreview({ item }) {
-  console.log("Quiz data: questions", item.content_data?.questions);
   const totalQuestions =
     item.content_data?.questions?.length || item.total_questions || 0;
   return (
@@ -1079,21 +1088,43 @@ function QuizPreview({ item }) {
 }
 // ─── Module Card ──────────────────────────────────────────────────────────────
 
-function ModuleCard({ module, index, onAddItem, token }) {
-  const [open, setOpen] = useState(index === 0);
+function ModuleCard({ moduleData, index, onAddItem, token }) {
+  const [open, setOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const totalMinutes = module.content_items.reduce(
-    (sum, item) => sum + (item.estimated_duration_minutes || 0),
-    0,
-  );
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["modules", moduleData.id],
+    queryFn: () => getCourseModules(moduleData.id),
+    enabled: open,
+  });
+
+  function handleOpen() {
+    setOpen((v) => !v);
+    refetch();
+  }
+
+  const module = data;
+  const totalMinutes =
+    module?.content_items?.reduce(
+      (sum, item) => sum + (item.estimated_duration_minutes || 0),
+      0,
+    ) || 0;
+
+  // Determine which data to show in header
+  const displayTitle = module?.title || moduleData.title;
+  const displayDescription = module?.description || moduleData.description;
+  const displayDuration = module
+    ? totalMinutes
+    : moduleData.estimated_duration || "";
+  const displayItemCount =
+    module?.content_items?.length || moduleData.content_items?.length || "";
 
   return (
     <>
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden">
         {/* Module Header */}
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={handleOpen}
           className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -1101,26 +1132,37 @@ function ModuleCard({ module, index, onAddItem, token }) {
               {String(index + 1).padStart(2, "0")}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-gray-900 text-sm">{module.title}</p>
+              <p className="font-bold text-gray-900 text-sm">{displayTitle}</p>
               <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
-                {module.description}
+                {displayDescription}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-4 flex-shrink-0">
             <div className="hidden sm:flex items-center gap-3 text-xs text-gray-400">
-              <span className="flex items-center gap-1">
-                <Layers className="w-3.5 h-3.5" />
-                {module.content_items.length} items
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {totalMinutes}m
-              </span>
+              {!isLoading && (
+                <>
+                  {displayItemCount && (
+                    <span className="flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5" />
+                      {displayItemCount} items
+                    </span>
+                  )}
+                  {displayDuration && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {displayDuration}m
+                    </span>
+                  )}
+                </>
+              )}
+              {isLoading && (
+                <span className="text-xs text-gray-400">Loading...</span>
+              )}
             </div>
-            <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+            {/* <button className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
               <Edit className="w-4 h-4" />
-            </button>
+            </button> */}
             {open ? (
               <ChevronUp className="w-4 h-4 text-gray-400" />
             ) : (
@@ -1130,7 +1172,25 @@ function ModuleCard({ module, index, onAddItem, token }) {
         </button>
 
         {/* Module Body */}
-        {open && (
+        {open && isLoading && (
+          <div className="border-t border-gray-100 bg-gray-50 p-4">
+            <div className="w-full animate-pulse space-y-3">
+              <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+              <div className="h-3 bg-gray-300 rounded w-full"></div>
+              <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+            </div>
+          </div>
+        )}
+
+        {open && error && (
+          <div className="border-t border-red-200 bg-red-50 p-4">
+            <p className="text-sm text-red-700">
+              Error loading module details.
+            </p>
+          </div>
+        )}
+
+        {open && module && (
           <div className="border-t border-gray-100 p-5 space-y-4">
             {/* Learning Objectives */}
             {module.learning_objectives?.length > 0 && (
@@ -1160,30 +1220,47 @@ function ModuleCard({ module, index, onAddItem, token }) {
             )}
 
             {/* Content Items */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Content ({module.content_items.length})
+            {module.content_items?.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Content ({module.content_items.length})
+                  </p>
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-semibold transition"
+                  >
+                    + Add Item
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {module.content_items.map((item) => (
+                    <ContentItemCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add Item Button when no items */}
+            {module.content_items?.length === 0 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  Content
                 </p>
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="text-xs text-blue-600 hover:text-blue-700 font-semibold transition"
+                  className="w-full py-2.5 px-4 border border-blue-200 text-blue-600 rounded-lg font-semibold text-sm hover:bg-blue-50 transition"
                 >
-                  + Add Item
+                  + Add First Item
                 </button>
               </div>
-              <div className="space-y-2">
-                {module.content_items.map((item) => (
-                  <ContentItemCard key={item.id} item={item} />
-                ))}
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
       <AddContentItemModal
-        moduleId={module.id}
+        moduleId={module?.id || moduleData.id}
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSuccess={() => {
@@ -1191,7 +1268,9 @@ function ModuleCard({ module, index, onAddItem, token }) {
           onAddItem();
         }}
         token={token}
-        existingItemsCount={module.content_items.length}
+        existingItemsCount={
+          module?.content_items?.length || moduleData.content_items?.length || 0
+        }
       />
     </>
   );
@@ -1206,7 +1285,7 @@ export default function InstructorCourseDetail() {
 
   const { data: course, isLoading, error, refetch } = useCourseDetail(id);
   const { logout, user } = useAuth();
-  console.log("Course Detail:", course);
+
   const [showAddModuleModal, setShowAddModuleModal] = useState(false);
 
   const token = localStorage.getItem("access_token");
@@ -1214,7 +1293,6 @@ export default function InstructorCourseDetail() {
   const level = course?.difficulty_level?.toLowerCase();
   const gradient = levelGradients[level] || "from-blue-500 to-indigo-600";
   const icon = levelIcons[level] || "📖";
-  console.log("Course Data:", course?.modules);
 
   const initials = user
     ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()
@@ -1232,14 +1310,7 @@ export default function InstructorCourseDetail() {
   // ── Loading ──────────────────────────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">Loading course details...</p>
-        </div>
-      </div>
-    );
+    return <InstructorCourseDetailSkeleton />;
   }
 
   // ── Error ────────────────────────────────────────────────────────────────
@@ -1436,7 +1507,7 @@ export default function InstructorCourseDetail() {
                 {course.modules.map((module, idx) => (
                   <ModuleCard
                     key={module.id}
-                    module={module}
+                    moduleData={module}
                     index={idx}
                     onAddItem={handleRefresh}
                     token={token}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Star,
@@ -223,7 +223,18 @@ export default function Dashboard() {
                 Vision-Code
               </span>
             </Link>
-
+            <NavLink
+              to="/courses"
+              className={({ isActive }) =>
+                `font-medium transition pb-1 ${
+                  isActive
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-700 hover:text-blue-600"
+                }`
+              }
+            >
+              Courses
+            </NavLink>
             <div className="flex items-center gap-3">
               <Link
                 to="/settings"

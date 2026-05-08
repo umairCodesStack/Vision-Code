@@ -29,7 +29,7 @@ function SignupForm() {
   const onSubmit = async (data) => {
     try {
       await signup.mutateAsync(data);
-      navigate("/dashboard");
+      navigate("/app");
     } catch (err) {
       console.log("Signup error:", err);
       toast.error("Signup failed. Please try again.");

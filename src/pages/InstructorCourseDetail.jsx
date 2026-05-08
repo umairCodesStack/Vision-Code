@@ -1358,12 +1358,7 @@ export default function InstructorCourseDetail() {
               </span>
             </Link>
             <div className="flex items-center gap-3">
-              <Link
-                to="/settings"
-                className="p-2 text-gray-500 hover:text-blue-600 transition rounded-lg hover:bg-gray-100"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
+             
               <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                 {initials}
               </div>
@@ -1424,10 +1419,7 @@ export default function InstructorCourseDetail() {
                   <Layers className="w-4 h-4" />
                   {course.total_modules} modules
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Star className="w-4 h-4 fill-white/70" />
-                  4.5 rating
-                </span>
+                
               </div>
             </div>
             {/* <button className="px-4 py-2.5 bg-white text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-50 transition flex items-center gap-2 flex-shrink-0 h-fit">

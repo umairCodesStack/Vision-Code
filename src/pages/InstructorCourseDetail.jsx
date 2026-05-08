@@ -1446,7 +1446,7 @@ export default function InstructorCourseDetail() {
               icon: Users,
             },
             { label: "Modules", value: course.total_modules, icon: Layers },
-            { label: "Rating", value: "4.5 / 5", icon: Star },
+          
             {
               label: "Level",
               value:
@@ -1520,54 +1520,10 @@ export default function InstructorCourseDetail() {
           {/* Right — Sidebar */}
           <div className="space-y-5">
             {/* Course Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-bold text-gray-900 mb-4">Course Actions</h3>
-              <div className="space-y-2">
-                {/* <button className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                  <Edit className="w-4 h-4" />
-                  Edit Course
-                </button> */}
-                <button className="w-full py-2.5 px-4 bg-gray-100 text-gray-900 rounded-lg font-semibold text-sm hover:bg-gray-200 transition">
-                  Preview as Student
-                </button>
-                <button className="w-full py-2.5 px-4 bg-gray-100 text-gray-900 rounded-lg font-semibold text-sm hover:bg-gray-200 transition">
-                  View Analytics
-                </button>
-              </div>
-            </div>
+            
 
             {/* Quick Stats */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-              <h3 className="font-bold text-gray-900 mb-4">Engagement</h3>
-              <div className="space-y-3">
-                {[
-                  {
-                    label: "Avg. Completion",
-                    value: "72%",
-                    color: "text-green-600",
-                  },
-                  {
-                    label: "Avg. Rating",
-                    value: "4.5/5",
-                    color: "text-yellow-600",
-                  },
-                  {
-                    label: "Total Reviews",
-                    value: "1,234",
-                    color: "text-blue-600",
-                  },
-                ].map(({ label, value, color }) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between"
-                  >
-                    <p className="text-sm text-gray-600">{label}</p>
-                    <span className={`font-bold ${color}`}>{value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+            
             {/* Topics */}
             {course.topics?.length > 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">

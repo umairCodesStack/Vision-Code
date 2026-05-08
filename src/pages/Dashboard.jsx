@@ -235,13 +235,19 @@ export default function Dashboard() {
             >
               Courses
             </NavLink>
+            <NavLink
+              to="https://visionocr.up.railway.app/"
+              className={({ isActive }) =>
+                `font-medium transition pb-1 ${
+                  isActive
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-700 hover:text-blue-600"
+                }`
+              }
+            >
+              Practice
+            </NavLink>
             <div className="flex items-center gap-3">
-              <Link
-                to="/settings"
-                className="p-2 text-gray-500 hover:text-blue-600 transition rounded-lg hover:bg-gray-100"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                   {initials}
@@ -331,13 +337,6 @@ export default function Dashboard() {
               icon: <CheckCircle className="w-5 h-5 text-green-600" />,
               bg: "bg-green-50",
               sub: "finished",
-            },
-            {
-              label: "Avg Progress",
-              value: `${avgProgress}%`,
-              icon: <TrendingUp className="w-5 h-5 text-purple-600" />,
-              bg: "bg-purple-50",
-              sub: "across all courses",
             },
           ].map(({ label, value, icon, bg, sub }) => (
             <div
@@ -488,18 +487,6 @@ export default function Dashboard() {
             </div>
 
             {/* Daily Challenge */}
-            <div className="bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl p-6 text-white">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold">Daily Challenge</h3>
-                <span className="text-2xl">🎯</span>
-              </div>
-              <p className="text-sm text-orange-50 mb-4">
-                Complete today's challenge and earn 50 XP bonus!
-              </p>
-              <button className="w-full py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-lg text-sm font-semibold transition">
-                Start Challenge
-              </button>
-            </div>
 
             {/* Achievements */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -541,33 +528,6 @@ export default function Dashboard() {
             </div>
 
             {/* Community */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-500" />
-                Community
-              </h3>
-              <div className="space-y-2 text-sm mb-4">
-                {[
-                  { color: "bg-green-500", text: "1,234 members online" },
-                  { color: "bg-blue-500", text: "45 new discussions" },
-                  { color: "bg-purple-500", text: "12 live study groups" },
-                ].map(({ color, text }) => (
-                  <div
-                    key={text}
-                    className="flex items-center gap-2 text-gray-600"
-                  >
-                    <span className={`w-2 h-2 ${color} rounded-full`} />
-                    {text}
-                  </div>
-                ))}
-              </div>
-              <Link
-                to="/community"
-                className="block w-full py-2 text-center border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
-              >
-                Join Community
-              </Link>
-            </div>
           </div>
         </div>
       </div>

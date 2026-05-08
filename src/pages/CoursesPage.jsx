@@ -46,7 +46,7 @@ function CoursesPage() {
       <CourseHero />
       {/* <CourseFilters /> */}
       <CourseGrid />
-      <NewsLetter />
+
       <Footer />
     </div>
   );

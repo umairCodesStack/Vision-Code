@@ -45,6 +45,18 @@ function HomePage() {
         >
           Courses
         </NavLink>
+        <NavLink
+          to="https://visionocr.up.railway.app/"
+          className={({ isActive }) =>
+            `font-medium transition pb-1 ${
+              isActive
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-700 hover:text-blue-600"
+            }`
+          }
+        >
+          Practice
+        </NavLink>
       </NavBar>
       <HeroSection />
       <Stats />

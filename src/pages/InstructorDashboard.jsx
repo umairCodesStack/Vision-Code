@@ -364,20 +364,6 @@ export default function InstructorDashboard() {
               bg: "bg-purple-50",
               sub: "enrolled",
             },
-            {
-              label: "Total Hours",
-              value: totalHours,
-              icon: <TrendingUp className="w-5 h-5 text-green-600" />,
-              bg: "bg-green-50",
-              sub: "content hours",
-            },
-            {
-              label: "Avg. Rating",
-              value: "4.8",
-              icon: <span className="text-lg">⭐</span>,
-              bg: "bg-yellow-50",
-              sub: "from reviews",
-            },
           ].map(({ label, value, icon, bg, sub }) => (
             <div
               key={label}

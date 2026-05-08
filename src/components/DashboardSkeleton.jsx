@@ -35,7 +35,6 @@ export default function DashboardSkeleton() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Settings className="w-5 h-5 text-gray-500" />
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 bg-gray-300 rounded-full animate-pulse" />
                 <div className="hidden md:block space-y-1">
@@ -151,14 +150,14 @@ export default function DashboardSkeleton() {
             </div>
 
             {/* Daily Challenge Skeleton */}
-            <div className="bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl p-6 animate-pulse">
+            {/* <div className="bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl p-6 animate-pulse">
               <div className="flex items-center justify-between mb-3">
                 <div className="h-5 bg-white/20 rounded w-32" />
                 <span className="text-2xl">🎯</span>
               </div>
               <div className="h-4 bg-white/20 rounded w-3/4 mb-4" />
               <div className="w-full h-10 bg-white/20 rounded-lg" />
-            </div>
+            </div> */}
 
             {/* Achievements Skeleton */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-pulse">

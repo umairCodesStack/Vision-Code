@@ -69,13 +69,6 @@ function CourseGrid() {
           ))}
         </div>
       )}
-
-      {/* Load More */}
-      {!isLoading && courses.length > 0 && (
-        <div className="text-center mt-12">
-          <Button>Load More Courses</Button>
-        </div>
-      )}
     </div>
   );
 }

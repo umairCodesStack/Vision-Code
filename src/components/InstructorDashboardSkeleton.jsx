@@ -27,7 +27,6 @@ export default function InstructorDashboardSkeleton() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Settings className="w-5 h-5 text-gray-500" />
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 bg-gray-300 rounded-full animate-pulse" />
                 <div className="hidden md:block space-y-1">

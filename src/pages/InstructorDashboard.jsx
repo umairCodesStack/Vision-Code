@@ -92,13 +92,7 @@ function CourseCard({ course, onEdit, onDelete }) {
         >
           <Edit className="w-3.5 h-3.5" />
         </button> */}
-        <button
-          onClick={() => onDelete(course.id)}
-          className="px-3 py-2 border border-red-200 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-50 transition"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
-      </div>
+        </div>
     </div>
   );
 }

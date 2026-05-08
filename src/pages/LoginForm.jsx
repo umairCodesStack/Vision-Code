@@ -26,7 +26,7 @@ function LoginForm() {
   const onSubmit = async (data) => {
     try {
       await login.mutateAsync(data);
-      navigate("/dashboard");
+      navigate("/app");
     } catch (err) {
       console.log("Login error:", err);
     }

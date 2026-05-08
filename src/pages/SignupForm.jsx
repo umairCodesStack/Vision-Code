@@ -1,47 +1,54 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAuth } from "../context/FakeAuth";
-import GoogleButton from "../components/GoogleButton";
 import Button from "../components/Button";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function SignupForm() {
-  const [email, setEmail] = useState("info@vision-code.dev");
-  const [password, setPassword] = useState("vision-code");
-  const [firstName, setFirstName] = useState("First Name");
-  const [lastName, setLastName] = useState("Last Name");
-  const [role, setRole] = useState("student"); // 👈 NEW
   const [showPassword, setShowPassword] = useState(false);
 
   const { signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      role: "student",
+    },
+    mode: "onTouched",
+  });
 
+  const onSubmit = async (data) => {
     try {
-      const data = await signup.mutateAsync({
-        email,
-        password,
-        firstName,
-        lastName,
-        role,
-      });
-      navigate("/app");
+      await signup.mutateAsync(data);
+      navigate("/dashboard");
     } catch (err) {
       console.log("Signup error:", err);
-      toast.error("Signup failed. Please try again."); // ✅ NEW: show error toast
+      toast.error("Signup failed. Please try again.");
     }
   };
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/app", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
+  const inputBase = "w-full p-3 border rounded-lg";
+  const errorClass = "border-red-500";
+  const okClass = "border-gray-300";
+
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         {/* First Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -49,11 +56,25 @@ function SignupForm() {
           </label>
           <input
             type="text"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
+            placeholder="Enter your first name"
+            className={`${inputBase} ${errors.firstName ? errorClass : okClass}`}
+            {...register("firstName", {
+              required: "First name is required",
+              minLength: {
+                value: 2,
+                message: "First name must be at least 2 characters",
+              },
+              pattern: {
+                value: /^[A-Za-z\s'-]+$/,
+                message: "Only letters are allowed",
+              },
+            })}
           />
+          {errors.firstName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.firstName.message}
+            </p>
+          )}
         </div>
 
         {/* Last Name */}
@@ -63,11 +84,25 @@ function SignupForm() {
           </label>
           <input
             type="text"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
+            placeholder="Enter your last name"
+            className={`${inputBase} ${errors.lastName ? errorClass : okClass}`}
+            {...register("lastName", {
+              required: "Last name is required",
+              minLength: {
+                value: 2,
+                message: "Last name must be at least 2 characters",
+              },
+              pattern: {
+                value: /^[A-Za-z\s'-]+$/,
+                message: "Only letters are allowed",
+              },
+            })}
           />
+          {errors.lastName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.lastName.message}
+            </p>
+          )}
         </div>
 
         {/* Email */}
@@ -77,14 +112,22 @@ function SignupForm() {
           </label>
           <input
             type="email"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            placeholder="you@example.com"
+            className={`${inputBase} ${errors.email ? errorClass : okClass}`}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Please enter a valid email address",
+              },
+            })}
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
         </div>
 
-        {/* Role Selection 👇 */}
+        {/* Role Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Select Role
@@ -95,8 +138,7 @@ function SignupForm() {
               <input
                 type="radio"
                 value="student"
-                checked={role === "student"}
-                onChange={(e) => setRole(e.target.value)}
+                {...register("role", { required: "Please select a role" })}
               />
               Student
             </label>
@@ -105,12 +147,14 @@ function SignupForm() {
               <input
                 type="radio"
                 value="instructor"
-                checked={role === "instructor"}
-                onChange={(e) => setRole(e.target.value)}
+                {...register("role", { required: "Please select a role" })}
               />
               Instructor
             </label>
           </div>
+          {errors.role && (
+            <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -121,10 +165,17 @@ function SignupForm() {
 
           <input
             type={showPassword ? "text" : "password"}
-            className="w-full p-3 border border-gray-300 rounded-lg pr-12"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            placeholder="At least 8 characters"
+            className={`${inputBase} pr-12 ${
+              errors.password ? errorClass : okClass
+            }`}
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+            })}
           />
 
           <button
@@ -134,6 +185,11 @@ function SignupForm() {
           >
             {showPassword ? "🙈" : "👁️"}
           </button>
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <Button
@@ -144,17 +200,6 @@ function SignupForm() {
           Sign Up
         </Button>
       </form>
-
-      {/* <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Or continue with</span>
-        </div>
-      </div>
-
-      <GoogleButton /> */}
 
       <p className="mt-4 text-center text-sm text-gray-600">
         Already have an account?{" "}

@@ -258,12 +258,7 @@ export default function InstructorDashboard() {
             </Link>
 
             <div className="flex items-center gap-3">
-              <Link
-                to="/settings"
-                className="p-2 text-gray-500 hover:text-blue-600 transition rounded-lg hover:bg-gray-100"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
+              
               <div className="flex items-center gap-2">
                 <div className="w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                   {initials}
@@ -389,30 +384,12 @@ export default function InstructorDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">Your Courses</h2>
-            <Link
-              to="/instructor/create-course"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Course
-            </Link>
+           
           </div>
 
           <div className="p-6">
             {courses.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpen className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">
-                  No courses yet. Start by creating your first course!
-                </p>
-                <Link
-                  to="/instructor/create-course"
-                  className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition inline-flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Create First Course
-                </Link>
-              </div>
+              
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {courses.map((course) => (

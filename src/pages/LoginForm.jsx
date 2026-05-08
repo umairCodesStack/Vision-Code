@@ -1,22 +1,31 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useAuth } from "../context/FakeAuth";
 import GoogleButton from "../components/GoogleButton";
 import Button from "../components/Button";
 import { NavLink, useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const [email, setEmail] = useState("info@vision-code.dev");
-  const [password, setPassword] = useState("vision-code");
-  const [showPassword, setShowPassword] = useState(false); // 👈 NEW
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "onTouched",
+  });
 
+  const onSubmit = async (data) => {
     try {
-      const data = await login.mutateAsync({ email, password });
+      await login.mutateAsync(data);
       navigate("/dashboard");
     } catch (err) {
       console.log("Login error:", err);
@@ -29,41 +38,60 @@ function LoginForm() {
     }
   }, [isAuthenticated, navigate]);
 
+  const inputBase =
+    "w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition";
+
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-900">
         Welcome Back
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email Address
           </label>
           <input
             type="email"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            placeholder="you@example.com"
+            className={`${inputBase} ${
+              errors.email ? "border-red-500" : "border-gray-300"
+            }`}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Please enter a valid email address",
+              },
+            })}
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
         </div>
 
-        {/* 👇 PASSWORD FIELD WITH TOGGLE */}
+        {/* PASSWORD FIELD WITH TOGGLE */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Password
           </label>
 
           <input
-            type={showPassword ? "text" : "password"} // 👈 toggle type
-            className="w-full p-3 border border-gray-300 rounded-lg pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            className={`${inputBase} pr-12 ${
+              errors.password ? "border-red-500" : "border-gray-300"
+            }`}
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+            })}
           />
 
-          {/* 👇 Toggle Button */}
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
@@ -71,6 +99,11 @@ function LoginForm() {
           >
             {showPassword ? "🙈" : "👁️"}
           </button>
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <Button
